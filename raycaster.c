@@ -9,8 +9,8 @@
 #define windowWidth 720
 
 static char map[] = {
-  0, 0, 1, 0, 0,
-  1, 1, 0, 1, 1,
+  1, 1, 1, 1, 1,
+  1, 0, 0, 0, 1,
   1, 0, 0, 0, 1,
   1, 0, 0, 0, 1,
   1, 1, 1, 1, 1
@@ -75,12 +75,12 @@ int loop_hook(t_key *k)
   {
     Wall = 0;
     decal_ray = (double)((double)i / (double)windowWidth);
-    Ray_X = (k->Pos_X + Dir_X + (Plane_X - decal_ray));
+    Ray_X = (Dir_X + (Plane_X - decal_ray));
     //printf("decal_ray : %f\n", decal_ray);
     if (decal_ray >= 0.5)
-      Ray_Y = (k->Pos_Y + Dir_Y + Plane_Y);
+      Ray_Y = (Dir_Y + Plane_Y);
     else
-      Ray_Y = (k->Pos_Y + Dir_Y - Plane_Y);
+      Ray_Y = (Dir_Y - Plane_Y);
     //printf("Ray_X: %f\n", Ray_X);
     //printf("Ray_Y: %f\n", Ray_Y);
     intersection_Y = k->Pos_Y - (k->Pos_Y - (long)k->Pos_Y);
@@ -89,11 +89,14 @@ int loop_hook(t_key *k)
     {
       Horizontal_Wall_X = (long)intersection_X;
       Horizontal_Wall_Y = (long)intersection_Y;
-      if (k->worldMap[(Horizontal_Wall_Y - 1) * mapWidth + Horizontal_Wall_X] == 1)
+      if (k->worldMap[Horizontal_Wall_Y * mapWidth + Horizontal_Wall_X] == 1)
         Wall = 1;
       else
       {
-        intersection_Y += 0.1;
+        if (Dir_Y > 0)
+          intersection_Y += 1;
+        else
+          intersection_Y -= 1;
         intersection_X = (Ray_X * intersection_Y - 3.541) / Ray_Y;
       }
     } 
@@ -102,7 +105,7 @@ int loop_hook(t_key *k)
     Wall = 0;
     intersection_X = k->Pos_X - (k->Pos_X - (long)k->Pos_X);
     intersection_Y = (Ray_Y * intersection_X + 3.541) / Ray_X;
-    while (Wall != 1)
+    while (Wall != 1 && decal_ray != 0.5)
     {
       Vertical_Wall_X = (long)intersection_X;
       Vertical_Wall_Y = (long)intersection_Y;
@@ -110,7 +113,10 @@ int loop_hook(t_key *k)
         Wall = 1;
       else
       {
-        intersection_X += 0.1;
+        if (decal_ray > 0.5)
+          intersection_X += 1;
+        else
+          intersection_X -= 1;
         intersection_Y = (Ray_Y * intersection_X + 3.541) / Ray_X;
       }
     }
