@@ -3,17 +3,18 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define mapHeight 5
-#define mapWidth 5
+#define mapHeight 6
+#define mapWidth 7
 #define windowHeight 480
 #define windowWidth 720
 
 static char map[] = {
-  1, 1, 1, 1, 1,
-  1, 0, 0, 0, 1,
-  1, 0, 0, 0, 1,
-  1, 0, 0, 0, 1,
-  1, 1, 1, 1, 1
+  1, 1, 1, 1, 1, 1, 1,
+  1, 0, 0, 0, 0, 0, 1,
+  1, 0, 1, 0, 1, 0, 1,
+  1, 0, 0, 0, 0, 0, 1,
+  1, 0, 0, 0, 0, 0, 1,
+  1, 1, 1, 1, 1, 1, 1
 };
 
 typedef	struct		s_key
@@ -39,6 +40,10 @@ int			deal_key(int key, t_key *k)
     k->Pos_Y = k->Pos_Y - 1;
   if (key == 125 && k->worldMap[(Colision_Check_Y + 1) * mapWidth + Colision_Check_X] != 1)
     k->Pos_Y = k->Pos_Y + 1;
+  if (key == 123 && k->worldMap[Colision_Check_Y * mapWidth + (Colision_Check_X - 1)] != 1)
+    k->Pos_X = k->Pos_X - 1;
+  if (key == 124 && k->worldMap[Colision_Check_Y * mapWidth + (Colision_Check_X + 1)] != 1)
+    k->Pos_X = k->Pos_X + 1;
   return (0);
 }
 
@@ -52,6 +57,7 @@ int loop_hook(t_key *k)
   double    Ray_Y;
   double    intersection_X;
   double    intersection_Y;
+  double    intersection_tmp;
   long      Horizontal_Wall_X;
   long      Horizontal_Wall_Y;
   long      Vertical_Wall_X;
@@ -76,16 +82,16 @@ int loop_hook(t_key *k)
     Wall = 0;
     decal_ray = (double)((double)i / (double)windowWidth);
     Ray_X = (Dir_X + (Plane_X - decal_ray));
-    //printf("decal_ray : %f\n", decal_ray);
+    printf("decal_ray : %f\n", decal_ray);
     if (decal_ray >= 0.5)
       Ray_Y = (Dir_Y + Plane_Y);
     else
       Ray_Y = (Dir_Y - Plane_Y);
-    //printf("Ray_X: %f\n", Ray_X);
-    //printf("Ray_Y: %f\n", Ray_Y);
+    printf("Ray_X: %f\n", Ray_X);
+    printf("Ray_Y: %f\n", Ray_Y);
     intersection_Y = k->Pos_Y - (k->Pos_Y - (long)k->Pos_Y);
     intersection_X = (Ray_X * intersection_Y - 3.541) / Ray_Y;
-    while (Wall != 1)
+    while (Wall != 1 && intersection_Y >= 0 && intersection_Y <= mapHeight && intersection_X >= 0 && intersection_X <= mapWidth)
     {
       Horizontal_Wall_X = (long)intersection_X;
       Horizontal_Wall_Y = (long)intersection_Y;
@@ -94,18 +100,36 @@ int loop_hook(t_key *k)
       else
       {
         if (Dir_Y > 0)
+        {
           intersection_Y += 1;
+          Ray_Y += 1;
+        }
         else
+        {
           intersection_Y -= 1;
+          Ray_Y -= 1;
+        }
+        intersection_tmp = intersection_X;
         intersection_X = (Ray_X * intersection_Y - 3.541) / Ray_Y;
+        Ray_X = intersection_X - intersection_tmp;
       }
     } 
-    WallHeight_Horizontal = (1 / sqrt(pow(Horizontal_Wall_X - k->Pos_X, 2) + pow(Horizontal_Wall_Y - k->Pos_Y, 2))) * k->Projection_distance;
+    WallHeight_Horizontal = (1 / sqrt(pow(intersection_X - k->Pos_X, 2) + pow(intersection_Y - k->Pos_Y, 2))) * k->Projection_distance;
     WallHeight_Horizontal = windowHeight * WallHeight_Horizontal;
+    if (intersection_Y < 0 || intersection_Y > mapHeight || intersection_X < 0 || intersection_X > mapWidth)
+      WallHeight_Horizontal = 0;
     Wall = 0;
-    intersection_X = k->Pos_X - (k->Pos_X - (long)k->Pos_X);
-    intersection_Y = (Ray_Y * intersection_X + 3.541) / Ray_X;
-    while (Wall != 1 && decal_ray != 0.5)
+    Ray_X = (Dir_X + (Plane_X - decal_ray));
+    //printf("decal_ray : %f\n", decal_ray);
+    if (decal_ray >= 0.5)
+      Ray_Y = (Dir_Y + Plane_Y);
+    else
+      Ray_Y = (Dir_Y - Plane_Y);
+    printf("Ray_X: %f\n", Ray_X);
+    printf("Ray_Y: %f\n", Ray_Y);
+    intersection_Y = k->Pos_Y - (k->Pos_Y - (long)k->Pos_Y);
+    intersection_X = (Ray_X * intersection_Y - 3.541) / Ray_Y;
+    while (Wall != 1 && decal_ray != 0.5 && intersection_Y >= 0 && intersection_Y <= mapHeight && intersection_X >= 0 && intersection_X <= mapWidth)
     {
       Vertical_Wall_X = (long)intersection_X;
       Vertical_Wall_Y = (long)intersection_Y;
@@ -114,14 +138,24 @@ int loop_hook(t_key *k)
       else
       {
         if (decal_ray > 0.5)
+        {
           intersection_X += 1;
+          Ray_X += 1;
+        }
         else
+        {
           intersection_X -= 1;
+          Ray_X -= 1;
+        }
+        intersection_tmp = intersection_Y;
         intersection_Y = (Ray_Y * intersection_X + 3.541) / Ray_X;
+        Ray_Y = intersection_Y - intersection_tmp;
       }
     }
-    WallHeight_Vertical = (1 / sqrt(pow(Vertical_Wall_X - k->Pos_X, 2) + pow(Vertical_Wall_Y - k->Pos_Y, 2))) * k->Projection_distance;
+    WallHeight_Vertical = (1 / sqrt(pow(intersection_X - k->Pos_X, 2) + pow(intersection_Y - k->Pos_Y, 2))) * k->Projection_distance;
     WallHeight_Vertical = windowHeight * WallHeight_Vertical;
+    if (decal_ray == 0.5 || intersection_Y < 0 || intersection_Y > mapHeight || intersection_X < 0 || intersection_X > mapWidth)
+      WallHeight_Vertical = 0;
     //printf("Horizontal Heiht: %f\n", WallHeight_Horizontal);
     //printf("Vertical Height: %f", WallHeight_Vertical);
     if (WallHeight_Horizontal > WallHeight_Vertical)
@@ -164,8 +198,8 @@ int main()
 	param = (t_key) { 0 };
   param.worldMap = map;
   param.Projection_distance = 0.866;
-  param.Pos_X = 2.5;
-  param.Pos_Y = 2.5;
+  param.Pos_X = 3.5;
+  param.Pos_Y = 3.5;
 	mlx_ptr = mlx_init();
 	win_ptr = mlx_new_window(mlx_ptr, windowWidth, windowHeight, "cub3D");
 	param.mlx_ptr = mlx_ptr;
