@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #define MAPHEIGHT 14
 #define MAPWIDTH 29
-#define WINDOWHEIGHT 384
-#define WINDOWWIDTH 512
+#define WINDOWHEIGHT 480
+#define WINDOWWIDTH 720
+#define ROT 0.1
 
 static char map[] = {
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -33,36 +34,49 @@ typedef	struct		s_key
   double  pos_x;
   double  pos_y;
   double  projection_distance;
+  double  dir_x;
+  double  dir_y;
+  double  angle;
+  double  plane_x;
+  double  plane_y;
+  double  camera_x;
   char     *worldmap;
 }					t_key;
 
 int			deal_key(int key, t_key *k)
 {
-  long  Colision_Check_X;
-  long  Colision_Check_Y;
-
-  Colision_Check_X = (long)k->pos_x;
-  Colision_Check_Y = (long)k->pos_y;
   if (key == 53)
+  {
 		mlx_destroy_window(k->mlx_ptr, k->win_ptr);
-  if (key == 126 && k->pos_y > 0)
-    k->pos_y = k->pos_y - 1;
-  if (key == 125 && k->pos_y < MAPHEIGHT)
-    k->pos_y = k->pos_y + 1;
-  if (key == 123 && k->pos_x > 0)
-    k->pos_x = k->pos_x - 1;
-  if (key == 124 && k->pos_x < MAPWIDTH)
-    k->pos_x = k->pos_x + 1;
+    exit(0);
+  }
+  if (key == 13 && k->pos_y > 0)
+    k->pos_y = k->pos_y - 0.5;
+  if (key == 1 && k->pos_y < MAPHEIGHT)
+    k->pos_y = k->pos_y + 0.5;
+  if (key == 0 && k->pos_x > 0)
+    k->pos_x = k->pos_x - 0.5;
+  if (key == 2 && k->pos_x < MAPWIDTH)
+    k->pos_x = k->pos_x + 0.5;
+  if (key == 124)
+  {
+    //pivot gauche
+    k->angle += ROT;
+  }
+  if (key == 123)
+  {
+    //pivot drt
+    k->angle -= ROT;
+  }
+  k->dir_x = cos(k->angle);
+  k->dir_y = sin(k->angle);
+  k->plane_x = -1 * k->dir_y;
+  k->plane_y = k->dir_x;
   return (0);
 }
 
 int loop_hook(t_key *k)
 {
-  double    dir_x;
-  double    dir_y;
-  double    plane_x;
-  double    plane_y;
-  double    camera_x;
   double    ray_dir_x;
   double    ray_dir_y;
   double    dist_x;
@@ -90,10 +104,6 @@ int loop_hook(t_key *k)
   int       endian;
   int       pixel_index;
 
-  dir_x = 0;
-  dir_y = (k->pos_x - k->projection_distance) - k->pos_x;
-  plane_x = 0.60;
-  plane_y = 0;
   time = 0;
   old_time = 0;
   i = 0;
@@ -103,9 +113,9 @@ int loop_hook(t_key *k)
   img_data_addr = (int *)mlx_get_data_addr(k->img_ptr, &bits_per_pixel, &size_line, &endian);
   while(i <= WINDOWWIDTH)
   {
-    camera_x = 2 * i / (double)WINDOWWIDTH - 1;
-    ray_dir_x = dir_x + plane_x * camera_x;
-    ray_dir_y = dir_y + plane_y * camera_x;
+    k->camera_x = 2 * i / (double)WINDOWWIDTH - 1;
+    ray_dir_x = k->dir_x + k->plane_x * k->camera_x;
+    ray_dir_y = k->dir_y + k->plane_y * k->camera_x;
     map_x = (long) k->pos_x;
     map_y= (long) k->pos_y;
     decalage_ray_x = fabs(1 / ray_dir_x);
@@ -196,6 +206,11 @@ int main()
   param.projection_distance = 0.866;
   param.pos_x = 26.5;
   param.pos_y = 11.5;
+  param.angle = -(M_PI / 2);
+  param.dir_x = cos(param.angle);
+  param.dir_y = sin(param.angle);
+  param.plane_x = -1 * param.dir_y;
+  param.plane_y = param.dir_x;
 	mlx_ptr = mlx_init();
 	win_ptr = mlx_new_window(mlx_ptr, WINDOWWIDTH, WINDOWHEIGHT, "cub3D");
 	param.mlx_ptr = mlx_ptr;
