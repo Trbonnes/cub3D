@@ -3,24 +3,33 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define MAPHEIGHT 6
-#define MAPWIDTH 7
+#define MAPHEIGHT 14
+#define MAPWIDTH 29
 #define WINDOWHEIGHT 384
 #define WINDOWWIDTH 512
 
 static char map[] = {
-  1, 1, 1, 1, 1, 1, 1,
-  1, 0, 0, 0, 0, 0, 1,
-  1, 1, 1, 0, 1, 1, 1,
-  1, 0, 0, 0, 0, 0, 1,
-  1, 0, 1, 0, 1, 0, 1,
-  1, 1, 1, 1, 1, 1, 1
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+  1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+  1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+  1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
+  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
+  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+  1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
+  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
+  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
 typedef	struct		s_key
 {
 	void    *mlx_ptr;
 	void    *win_ptr;
+  void    *img_ptr;
   double  pos_x;
   double  pos_y;
   double  projection_distance;
@@ -41,9 +50,9 @@ int			deal_key(int key, t_key *k)
   if (key == 125 && k->pos_y < MAPHEIGHT)
     k->pos_y = k->pos_y + 1;
   if (key == 123 && k->pos_x > 0)
-    k->pos_x = k->pos_x + 1;
-  if (key == 124 && k->pos_x < MAPWIDTH)
     k->pos_x = k->pos_x - 1;
+  if (key == 124 && k->pos_x < MAPWIDTH)
+    k->pos_x = k->pos_x + 1;
   return (0);
 }
 
@@ -75,6 +84,12 @@ int loop_hook(t_key *k)
   int       wall_color;
   int       j;
 
+  int       *img_data_addr;
+  int       bits_per_pixel;
+  int       size_line;
+  int       endian;
+  int       pixel_index;
+
   dir_x = 0;
   dir_y = (k->pos_x - k->projection_distance) - k->pos_x;
   plane_x = 0.60;
@@ -82,6 +97,10 @@ int loop_hook(t_key *k)
   time = 0;
   old_time = 0;
   i = 0;
+  if (k->img_ptr)
+    mlx_destroy_image(k->mlx_ptr, k->img_ptr);
+  k->img_ptr = mlx_new_image(k->mlx_ptr, WINDOWWIDTH, WINDOWHEIGHT);
+  img_data_addr = (int *)mlx_get_data_addr(k->img_ptr, &bits_per_pixel, &size_line, &endian);
   while(i <= WINDOWWIDTH)
   {
     camera_x = 2 * i / (double)WINDOWWIDTH - 1;
@@ -135,28 +154,34 @@ int loop_hook(t_key *k)
       wall_distance = (map_y - k->pos_y + (1 - step_y) / 2) / ray_dir_y;
     wall_height = WINDOWHEIGHT / wall_distance;
     if (wall_side == 0)
-      wall_color = 0x000000;
+      wall_color = 0x00000000;
     else
-      wall_color = 0xff0000;
+      wall_color = 0x00ff0000;
     j = (int)((WINDOWHEIGHT - wall_height) / 2);
     pixel_number = 0;
+    pixel_index = i;
     while (pixel_number < j)
     {
-      mlx_pixel_put(k->mlx_ptr, k->win_ptr, WINDOWWIDTH - i, pixel_number, 0x0000ff);
+      img_data_addr[pixel_index] = 0x000000ff;
       pixel_number++;
+      pixel_index += WINDOWWIDTH;
     }
     while (pixel_number <= (j + (int)wall_height))
     {
-      mlx_pixel_put(k->mlx_ptr, k->win_ptr, WINDOWWIDTH - i, pixel_number, wall_color);
+      img_data_addr[pixel_index] = wall_color;
       pixel_number++;
+      pixel_index += WINDOWWIDTH;
     }
     while (pixel_number <= (int)WINDOWHEIGHT)
     {
-      mlx_pixel_put(k->mlx_ptr, k->win_ptr, WINDOWWIDTH - i, pixel_number, 0xffffff);
+      img_data_addr[pixel_index] = 0x00ffffff;
       pixel_number++;
+      if (pixel_number < (int)WINDOWHEIGHT - 1)
+        pixel_index += WINDOWWIDTH;
     }
     i++;
   }
+  mlx_put_image_to_window(k->mlx_ptr, k->win_ptr, k->img_ptr, 0, 0);
   return (0);
 }
 
@@ -169,8 +194,8 @@ int main()
 	param = (t_key) { 0 };
   param.worldmap = map;
   param.projection_distance = 0.866;
-  param.pos_x = 3.5;
-  param.pos_y = 3.5;
+  param.pos_x = 26.5;
+  param.pos_y = 11.5;
 	mlx_ptr = mlx_init();
 	win_ptr = mlx_new_window(mlx_ptr, WINDOWWIDTH, WINDOWHEIGHT, "cub3D");
 	param.mlx_ptr = mlx_ptr;
