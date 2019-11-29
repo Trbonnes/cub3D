@@ -37,13 +37,13 @@ int			deal_key(int key, t_key *k)
   if (key == 53)
 		mlx_destroy_window(k->mlx_ptr, k->win_ptr);
   if (key == 126 && k->Pos_Y > 0)
-    k->Pos_Y = k->Pos_Y - 1;
+    k->Pos_Y = k->Pos_Y - 0.5;
   if (key == 125 && k->Pos_Y < mapHeight)
-    k->Pos_Y = k->Pos_Y + 1;
+    k->Pos_Y = k->Pos_Y + 0.5;
   if (key == 123 && k->Pos_X > 0)
-    k->Pos_X = k->Pos_X - 1;
+    k->Pos_X = k->Pos_X - 0.5;
   if (key == 124 && k->Pos_X < mapWidth)
-    k->Pos_X = k->Pos_X + 1;
+    k->Pos_X = k->Pos_X + 0.5;
   return (0);
 }
 
