@@ -1,53 +1,31 @@
-#include "mlx.h"
-#include "X.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#define MAPHEIGHT 14
-#define MAPWIDTH 29
-#define WINDOWHEIGHT 480
-#define WINDOWWIDTH 720
-#define ROT 0.1
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycaster.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/12/02 09:10:03 by trbonnes          #+#    #+#             */
+/*   Updated: 2019/12/02 10:47:23 by trbonnes         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static char map[] = {
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
-  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
-  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-};
+#include "../includes/cub3D.h"
 
-typedef	struct		s_key
+int    window_quit(t_key *k)
 {
-	void    *mlx_ptr;
-	void    *win_ptr;
-  void    *img_ptr;
-  double  pos_x;
-  double  pos_y;
-  double  projection_distance;
-  double  dir_x;
-  double  dir_y;
-  double  angle;
-  double  plane_x;
-  double  plane_y;
-  double  camera_x;
-  char     *worldmap;
-}					t_key;
+  mlx_destroy_window(k->mlx_ptr, k->win_ptr);
+  write(1, "Exiting\n", 8);
+  exit(0);
+  return (0);
+}
 
 int			deal_key(int key, t_key *k)
 {
   if (key == 53)
   {
 		mlx_destroy_window(k->mlx_ptr, k->win_ptr);
+    write(1, "Exiting\n", 8);
     exit(0);
   }
   if (key == 13 && !k->worldmap[(long)(k->pos_y + k->dir_y) * MAPWIDTH + (long)(k->pos_x + k->dir_x)])
@@ -78,6 +56,11 @@ int			deal_key(int key, t_key *k)
   k->dir_y = sin(k->angle);
   k->plane_x = -1 * k->dir_y;
   k->plane_y = k->dir_x;
+  printf("dir x: %lf\n", k->dir_x);
+  printf("dir y: %lf\n", k->dir_y);
+  printf("plane x: %lf\n", k->plane_x);
+  printf("plane y: %lf\n", k->plane_y);
+  printf("angle: %lf\n", k->angle);
   return (0);
 }
 
@@ -201,28 +184,35 @@ int loop_hook(t_key *k)
   return (0);
 }
 
-int main()
+int main(int ac, char **av)
 {
-	void 	    *mlx_ptr;
-	void 	    *win_ptr;
 	t_key	    param;
 
-	param = (t_key) { 0 };
-  param.worldmap = map;
-  param.projection_distance = 0.866;
-  param.pos_x = 26.5;
-  param.pos_y = 11.5;
-  param.angle = -(M_PI / 2);
-  param.dir_x = cos(param.angle);
-  param.dir_y = sin(param.angle);
-  param.plane_x = -1 * param.dir_y;
-  param.plane_y = param.dir_x;
-	mlx_ptr = mlx_init();
-	win_ptr = mlx_new_window(mlx_ptr, WINDOWWIDTH, WINDOWHEIGHT, "cub3D");
-	param.mlx_ptr = mlx_ptr;
-	param.win_ptr = win_ptr;
-  mlx_loop_hook(mlx_ptr, &loop_hook, &param);
-  mlx_hook(win_ptr, KeyPress, KeyPressMask, deal_key, &param);
-  mlx_loop(mlx_ptr);
+  if (ac == 2 || (ac == 3 && !ft_strncmp(av[2], "-save", 5)))
+  {
+    param = (t_key) { 0 };
+    parsing_init(av[1], &param);
+    param.worldmap = map;
+    param.projection_distance = 0.866;
+    param.pos_x = 26.5;
+    param.pos_y = 11.5;
+    param.angle = -(M_PI / 2);
+    param.dir_x = cos(param.angle);
+    param.dir_y = sin(param.angle);
+    param.plane_x = -1 * param.dir_y;
+    param.plane_y = param.dir_x;
+    param.mlx_ptr = mlx_init();
+    if (ac < 3)
+      param.win_ptr = mlx_new_window(param.mlx_ptr, WINDOWWIDTH, WINDOWHEIGHT, "cub3D");
+    else
+      save_img();
+    mlx_loop_hook(param.mlx_ptr, &loop_hook, &param);
+    mlx_hook(param.win_ptr, KeyPress, KeyPressMask, deal_key, &param);
+    mlx_hook(param.win_ptr, DestroyNotify, StructureNotifyMask, window_quit, &param);
+    mlx_loop(param.mlx_ptr);
+  }
+  else
+    write(2, "Parameters Error\nExiting\n", 25);
+  exit (0);
 	return(0);
 }
