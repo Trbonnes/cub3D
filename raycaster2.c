@@ -50,24 +50,30 @@ int			deal_key(int key, t_key *k)
 		mlx_destroy_window(k->mlx_ptr, k->win_ptr);
     exit(0);
   }
-  if (key == 13 && k->pos_y > 0)
-    k->pos_y = k->pos_y - 0.5;
-  if (key == 1 && k->pos_y < MAPHEIGHT)
-    k->pos_y = k->pos_y + 0.5;
-  if (key == 0 && k->pos_x > 0)
-    k->pos_x = k->pos_x - 0.5;
-  if (key == 2 && k->pos_x < MAPWIDTH)
-    k->pos_x = k->pos_x + 0.5;
+  if (key == 13 && !k->worldmap[(long)(k->pos_y + k->dir_y) * MAPWIDTH + (long)(k->pos_x + k->dir_x)])
+  {
+    k->pos_x += k->dir_x;
+    k->pos_y += k->dir_y;
+  }
+  if (key == 1 && !k->worldmap[(long)(k->pos_y - k->dir_y) * MAPWIDTH + (long)(k->pos_x - k->dir_x)])
+  {
+    k->pos_x -= k->dir_x;
+    k->pos_y -= k->dir_y;
+  }
+  if (key == 0 && !k->worldmap[(long)(k->pos_y - k->dir_x) * MAPWIDTH + (long)(k->pos_x - -1 * k->dir_y)])
+  {
+    k->pos_x -= -1 * k->dir_y;
+    k->pos_y -= k->dir_x;
+  }
+  if (key == 2 && !k->worldmap[(long)(k->pos_y + k->dir_x) * MAPWIDTH + (long)(k->pos_x + -1 * k->dir_y)])
+  {
+    k->pos_x += -1 * k->dir_y;
+    k->pos_y += k->dir_x;
+  }
   if (key == 124)
-  {
-    //pivot gauche
     k->angle += ROT;
-  }
   if (key == 123)
-  {
-    //pivot drt
     k->angle -= ROT;
-  }
   k->dir_x = cos(k->angle);
   k->dir_y = sin(k->angle);
   k->plane_x = -1 * k->dir_y;
