@@ -6,11 +6,11 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/17 10:46:23 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/11/28 09:51:17 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/02 11:56:57 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "../includes/get_next_line.h"
 
 char	*ft_memjoin(char const *s1, int size1, char const *s2, int size2)
 {
