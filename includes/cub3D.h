@@ -27,11 +27,21 @@
 # define MAPWIDTH 29
 # define WINDOWHEIGHT 480
 # define WINDOWWIDTH 720
-# define ROT 0.1
-
+# define ROT .1
 
 typedef	struct		s_key
 {
+  int     window_width;
+  int     window_heigth;
+  int     map_width;
+  int     map_heigth;
+  int     floor_color;
+  int     cieling_color;
+  char    *north_path;
+  char    *south_path;
+  char    *east_path;
+  char    *west_path;
+  char    *sprite_path;
 	void	  *mlx_ptr;
 	void	  *win_ptr;
 	void	  *img_ptr;
@@ -47,44 +57,14 @@ typedef	struct		s_key
 	char	  *worldmap;
 }					t_key;
 
-typedef struct s_parsing
-{
-  int   window_width;
-  int   window_heigth;
-  int   floor_color;
-  int   cieling_color;
-  char* north_path;
-  char* south_path;
-  char* east_path;
-  char* west_path;
-  char* sprite_path;
-  char* map;
-}               t_parsing;
-
-
-static char map[] = {
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
-  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1,
-  1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-};
-
-int		parsing_init(char *file, t_key *param);
-int		ft_strncmp(const char *s1, const char *s2, size_t n);
-void	save_img();
-int		ft_atoi(const char *str);
-int		ft_isdigit(int c);
-char	*ft_strdup(const char *s);
-char	*ft_strjoin(char const *s1, char const *s2);
+int		    parsing_init(char *file, t_key *param);
+int		    ft_strncmp(const char *s1, const char *s2, size_t n);
+void	    save_img();
+int		    ft_atoi(const char *str);
+int		    ft_isdigit(int c);
+char	    *ft_strdup(const char *s);
+char	    *ft_strjoin(char const *s1, char const *s2);
+size_t		ft_strlen(const char *s);
+int		    ft_isalpha(int c);
 
 #endif

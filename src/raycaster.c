@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:10:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/02 10:47:23 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 12:24:51 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,25 +25,25 @@ int			deal_key(int key, t_key *k)
   if (key == 53)
   {
 		mlx_destroy_window(k->mlx_ptr, k->win_ptr);
-    write(1, "Exiting\n", 8);
+    write(1, "ESC\nExiting\n", 12);
     exit(0);
   }
-  if (key == 13 && !k->worldmap[(long)(k->pos_y + k->dir_y) * MAPWIDTH + (long)(k->pos_x + k->dir_x)])
+  if (key == 13 && k->worldmap[(long)(k->pos_y + k->dir_y) * MAPWIDTH + (long)(k->pos_x + k->dir_x)] != '1')
   {
     k->pos_x += k->dir_x;
     k->pos_y += k->dir_y;
   }
-  if (key == 1 && !k->worldmap[(long)(k->pos_y - k->dir_y) * MAPWIDTH + (long)(k->pos_x - k->dir_x)])
+  if (key == 1 && k->worldmap[(long)(k->pos_y - k->dir_y) * MAPWIDTH + (long)(k->pos_x - k->dir_x)] != '1')
   {
     k->pos_x -= k->dir_x;
     k->pos_y -= k->dir_y;
   }
-  if (key == 0 && !k->worldmap[(long)(k->pos_y - k->dir_x) * MAPWIDTH + (long)(k->pos_x - -1 * k->dir_y)])
+  if (key == 0 && k->worldmap[(long)(k->pos_y - k->dir_x) * MAPWIDTH + (long)(k->pos_x - -1 * k->dir_y)] != '1')
   {
     k->pos_x -= -1 * k->dir_y;
     k->pos_y -= k->dir_x;
   }
-  if (key == 2 && !k->worldmap[(long)(k->pos_y + k->dir_x) * MAPWIDTH + (long)(k->pos_x + -1 * k->dir_y)])
+  if (key == 2 && k->worldmap[(long)(k->pos_y + k->dir_x) * MAPWIDTH + (long)(k->pos_x + -1 * k->dir_y)] != '1')
   {
     k->pos_x += -1 * k->dir_y;
     k->pos_y += k->dir_x;
@@ -80,21 +80,16 @@ int loop_hook(t_key *k)
   long      map_y;
   double    wall_distance;
   long      wall_height;
-  double    time;
-  double    old_time;
   int       i;
   int       pixel_number;
   int       wall_color;
   int       j;
-
   int       *img_data_addr;
   int       bits_per_pixel;
   int       size_line;
   int       endian;
   int       pixel_index;
-
-  time = 0;
-  old_time = 0;
+  
   i = 0;
   if (k->img_ptr)
     mlx_destroy_image(k->mlx_ptr, k->img_ptr);
@@ -144,7 +139,7 @@ int loop_hook(t_key *k)
         map_y += step_y;
         wall_side = 1;
       }
-      if (k->worldmap[map_y * MAPWIDTH + map_x] == 1)
+      if (k->worldmap[map_y * MAPWIDTH + map_x] == '1')
         wall = 1;
     }
     if (wall_side == 0) 
@@ -155,13 +150,13 @@ int loop_hook(t_key *k)
     if (wall_side == 0)
       wall_color = 0x00000000;
     else
-      wall_color = 0x00ff0000;
+      wall_color = 0x000000ff;
     j = (int)((WINDOWHEIGHT - wall_height) / 2);
     pixel_number = 0;
     pixel_index = i;
     while (pixel_number < j)
     {
-      img_data_addr[pixel_index] = 0x000000ff;
+      img_data_addr[pixel_index] = k->cieling_color;
       pixel_number++;
       pixel_index += WINDOWWIDTH;
     }
@@ -173,7 +168,7 @@ int loop_hook(t_key *k)
     }
     while (pixel_number <= (int)WINDOWHEIGHT)
     {
-      img_data_addr[pixel_index] = 0x00ffffff;
+      img_data_addr[pixel_index] = k->floor_color;
       pixel_number++;
       if (pixel_number < (int)WINDOWHEIGHT - 1)
         pixel_index += WINDOWWIDTH;
@@ -191,14 +186,9 @@ int main(int ac, char **av)
   if (ac == 2 || (ac == 3 && !ft_strncmp(av[2], "-save", 5)))
   {
     param = (t_key) { 0 };
-    parsing_init(av[1], &param);
-    param.worldmap = map;
-    param.projection_distance = 0.866;
-    param.pos_x = 26.5;
-    param.pos_y = 11.5;
     param.angle = -(M_PI / 2);
-    param.dir_x = cos(param.angle);
-    param.dir_y = sin(param.angle);
+    parsing_init(av[1], &param);
+    param.projection_distance = 0.866;
     param.plane_x = -1 * param.dir_y;
     param.plane_y = param.dir_x;
     param.mlx_ptr = mlx_init();

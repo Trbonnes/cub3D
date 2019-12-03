@@ -1,40 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/08 15:26:31 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 10:35:13 by trbonnes         ###   ########.fr       */
+/*   Created: 2019/10/08 10:08:53 by trbonnes          #+#    #+#             */
+/*   Updated: 2019/10/22 11:27:34 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-
-static size_t	ft_strlen(const char *str)
+int		ft_isalpha(int c)
 {
-	size_t size;
-
-	size = 0;
-	while (*str++)
-		size++;
-	return (size);
-}
-
-char			*ft_strdup(const char *s)
-{
-	char	*dst;
-	int		i;
-
-	i = 0;
-	if (!(dst = malloc(sizeof(*dst) * (ft_strlen(s) + 1))))
-		return (NULL);
-	while (s[i])
-	{
-		dst[i] = s[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (dst);
+	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122))
+		return (1);
+	else
+		return (0);
 }

@@ -6,13 +6,13 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 16:13:25 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/02 12:45:23 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 10:35:19 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-static size_t		ft_strlen(const char *s)
+size_t		ft_strlen(const char *s)
 {
 	size_t i;
 
