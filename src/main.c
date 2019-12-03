@@ -6,11 +6,11 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:16:51 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 15:44:38 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 15:48:25 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3D.h"
+#include "../includes/cub3d.h"
 
 int		main(int ac, char **av)
 {

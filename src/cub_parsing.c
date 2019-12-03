@@ -6,11 +6,11 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:20:39 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 14:12:35 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 15:48:13 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3D.h"
+#include "../includes/cub3d.h"
 
 char	*ft_map_trim(char *map)
 {

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
-/*	                                                                        */
+/*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3D.h                                            :+:      :+:    :+:   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/12/02 09:09:45 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/02 09:13:19 by trbonnes         ###   ########.fr       */
+/*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
+/*   Updated: 2019/12/03 15:53:58 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,72 +27,70 @@
 
 typedef	struct		s_key
 {
-  int     window_width;
-  int     window_heigth;
-  int     map_width;
-  int     map_heigth;
-  int     floor_color;
-  int     cieling_color;
-  char    *north_path;
-  char    *south_path;
-  char    *east_path;
-  char    *west_path;
-  char    *sprite_path;
-	void	  *mlx_ptr;
-	void	  *win_ptr;
-	void	  *img_ptr;
-	double	pos_x;
-	double	pos_y;
-	double	projection_distance;
-	double	dir_x;
-	double	dir_y;
-	double	angle;
-	double	plane_x;
-	double	plane_y;
-	double	camera_x;
-	char	  *worldmap;
+	int				window_width;
+	int				window_heigth;
+	int				map_width;
+	int				map_heigth;
+	int				floor_color;
+	int				cieling_color;
+	char			*north_path;
+	char			*south_path;
+	char			*east_path;
+	char			*west_path;
+	char			*sprite_path;
+	void			*mlx_ptr;
+	void			*win_ptr;
+	void			*img_ptr;
+	double			pos_x;
+	double			pos_y;
+	double			projection_distance;
+	double			dir_x;
+	double			dir_y;
+	double			angle;
+	double			plane_x;
+	double			plane_y;
+	double			camera_x;
+	char			*worldmap;
 }					t_key;
 
-typedef struct  s_img
+typedef struct		s_img
 {
-	int		wall_color;
-	int		*img_data;
-	int		size_line;
-	int		bits_per_pixel;
-	int		endian;
-}               t_img;
+	int				wall_color;
+	int				*img_data;
+	int				size_line;
+	int				bits_per_pixel;
+	int				endian;
+}					t_img;
 
-typedef struct s_dda
+typedef struct		s_dda
 {
-	double	ray_dir_x;
-	double	ray_dir_y;
-	double	dist_x;
-	double	dist_y;
-	double	decalage_ray_x;
-	double	decalage_ray_y;
-	int		  step_x;
-	int		  step_y;
-	int		  wall;
-	int		  wall_side;
-	long	  map_x;
-	long  	map_y;
-	double	wall_distance;
-	long	  wall_height;
-}              t_dda;
+	double			ray_dir_x;
+	double			ray_dir_y;
+	double			dist_x;
+	double			dist_y;
+	double			decalage_ray_x;
+	double			decalage_ray_y;
+	int				step_x;
+	int				step_y;
+	int				wall;
+	int				wall_side;
+	long			map_x;
+	long			map_y;
+	double			wall_distance;
+	long			wall_height;
+}					t_dda;
 
-
-
-int       window_quit(t_key *k);
-int       deal_key(int key, t_key *k);
-int       loop_hook(t_key *k);
-int		    parsing_init(int fd, t_key *param);
-int		    ft_strncmp(const char *s1, const char *s2, size_t n);
-void	    save_img();
-int		    ft_atoi(const char *str);
-int		    ft_isdigit(int c);
-char	    *ft_strdup(const char *s);
-char	    *ft_strjoin(char const *s1, char const *s2);
-size_t		ft_strlen(const char *s);
-int		    ft_isalpha(int c);
+int					window_quit(t_key *k);
+int					deal_key(int key, t_key *k);
+int					loop_hook(t_key *k);
+int					parsing_init(int fd, t_key *param);
+int					ft_strncmp(const char *s1, const char *s2, size_t n);
+void				save_img();
+int					ft_atoi(const char *str);
+int					ft_isdigit(int c);
+char				*ft_strdup(const char *s);
+char				*ft_strjoin(char const *s1, char const *s2);
+size_t				ft_strlen(const char *s);
+int					ft_isalpha(int c);
 
 #endif
