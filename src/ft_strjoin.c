@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 16:13:25 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 10:35:19 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 13:30:59 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ size_t		ft_strlen(const char *s)
 	return (i);
 }
 
-char				*ft_strjoin(char const *s1, char const *s2)
+char		*ft_strjoin(char const *s1, char const *s2)
 {
 	char *dest;
 	char *ptr;

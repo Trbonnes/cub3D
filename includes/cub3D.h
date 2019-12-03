@@ -53,7 +53,39 @@ typedef	struct		s_key
 	char	  *worldmap;
 }					t_key;
 
-int		    parsing_init(char *file, t_key *param);
+typedef struct  s_img
+{
+	int		wall_color;
+	int		*img_data;
+	int		size_line;
+	int		bits_per_pixel;
+	int		endian;
+}               t_img;
+
+typedef struct s_dda
+{
+	double	ray_dir_x;
+	double	ray_dir_y;
+	double	dist_x;
+	double	dist_y;
+	double	decalage_ray_x;
+	double	decalage_ray_y;
+	int		  step_x;
+	int		  step_y;
+	int		  wall;
+	int		  wall_side;
+	long	  map_x;
+	long  	map_y;
+	double	wall_distance;
+	long	  wall_height;
+}              t_dda;
+
+
+
+int       window_quit(t_key *k);
+int       deal_key(int key, t_key *k);
+int       loop_hook(t_key *k);
+int		    parsing_init(int fd, t_key *param);
 int		    ft_strncmp(const char *s1, const char *s2, size_t n);
 void	    save_img();
 int		    ft_atoi(const char *str);
