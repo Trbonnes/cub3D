@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:10:03 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 12:24:51 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 13:17:09 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,22 +28,22 @@ int			deal_key(int key, t_key *k)
     write(1, "ESC\nExiting\n", 12);
     exit(0);
   }
-  if (key == 13 && k->worldmap[(long)(k->pos_y + k->dir_y) * MAPWIDTH + (long)(k->pos_x + k->dir_x)] != '1')
+  if (key == 13 && k->worldmap[(long)(k->pos_y + k->dir_y) * k->map_width + (long)(k->pos_x + k->dir_x)] != '1')
   {
     k->pos_x += k->dir_x;
     k->pos_y += k->dir_y;
   }
-  if (key == 1 && k->worldmap[(long)(k->pos_y - k->dir_y) * MAPWIDTH + (long)(k->pos_x - k->dir_x)] != '1')
+  if (key == 1 && k->worldmap[(long)(k->pos_y - k->dir_y) * k->map_width + (long)(k->pos_x - k->dir_x)] != '1')
   {
     k->pos_x -= k->dir_x;
     k->pos_y -= k->dir_y;
   }
-  if (key == 0 && k->worldmap[(long)(k->pos_y - k->dir_x) * MAPWIDTH + (long)(k->pos_x - -1 * k->dir_y)] != '1')
+  if (key == 0 && k->worldmap[(long)(k->pos_y - k->dir_x) * k->map_width + (long)(k->pos_x - -1 * k->dir_y)] != '1')
   {
     k->pos_x -= -1 * k->dir_y;
     k->pos_y -= k->dir_x;
   }
-  if (key == 2 && k->worldmap[(long)(k->pos_y + k->dir_x) * MAPWIDTH + (long)(k->pos_x + -1 * k->dir_y)] != '1')
+  if (key == 2 && k->worldmap[(long)(k->pos_y + k->dir_x) * k->map_width + (long)(k->pos_x + -1 * k->dir_y)] != '1')
   {
     k->pos_x += -1 * k->dir_y;
     k->pos_y += k->dir_x;
@@ -56,11 +56,6 @@ int			deal_key(int key, t_key *k)
   k->dir_y = sin(k->angle);
   k->plane_x = -1 * k->dir_y;
   k->plane_y = k->dir_x;
-  printf("dir x: %lf\n", k->dir_x);
-  printf("dir y: %lf\n", k->dir_y);
-  printf("plane x: %lf\n", k->plane_x);
-  printf("plane y: %lf\n", k->plane_y);
-  printf("angle: %lf\n", k->angle);
   return (0);
 }
 
@@ -93,11 +88,11 @@ int loop_hook(t_key *k)
   i = 0;
   if (k->img_ptr)
     mlx_destroy_image(k->mlx_ptr, k->img_ptr);
-  k->img_ptr = mlx_new_image(k->mlx_ptr, WINDOWWIDTH, WINDOWHEIGHT);
+  k->img_ptr = mlx_new_image(k->mlx_ptr, k->window_width, k->window_heigth);
   img_data_addr = (int *)mlx_get_data_addr(k->img_ptr, &bits_per_pixel, &size_line, &endian);
-  while(i <= WINDOWWIDTH)
+  while(i <= k->window_width)
   {
-    k->camera_x = 2 * i / (double)WINDOWWIDTH - 1;
+    k->camera_x = 2 * i / (double)k->window_width - 1;
     ray_dir_x = k->dir_x + k->plane_x * k->camera_x;
     ray_dir_y = k->dir_y + k->plane_y * k->camera_x;
     map_x = (long) k->pos_x;
@@ -139,39 +134,39 @@ int loop_hook(t_key *k)
         map_y += step_y;
         wall_side = 1;
       }
-      if (k->worldmap[map_y * MAPWIDTH + map_x] == '1')
+      if (k->worldmap[map_y * k->map_width + map_x] == '1')
         wall = 1;
     }
     if (wall_side == 0) 
       wall_distance = (map_x - k->pos_x + (1 - step_x) / 2) / ray_dir_x;
     else           
       wall_distance = (map_y - k->pos_y + (1 - step_y) / 2) / ray_dir_y;
-    wall_height = WINDOWHEIGHT / wall_distance;
+    wall_height = k->window_heigth / wall_distance;
     if (wall_side == 0)
       wall_color = 0x00000000;
     else
       wall_color = 0x000000ff;
-    j = (int)((WINDOWHEIGHT - wall_height) / 2);
+    j = (int)((k->window_heigth - wall_height) / 2);
     pixel_number = 0;
     pixel_index = i;
     while (pixel_number < j)
     {
       img_data_addr[pixel_index] = k->cieling_color;
       pixel_number++;
-      pixel_index += WINDOWWIDTH;
+      pixel_index += k->window_width;
     }
     while (pixel_number <= (j + (int)wall_height))
     {
       img_data_addr[pixel_index] = wall_color;
       pixel_number++;
-      pixel_index += WINDOWWIDTH;
+      pixel_index += k->window_width;
     }
-    while (pixel_number <= (int)WINDOWHEIGHT)
+    while (pixel_number <= (int)k->window_heigth)
     {
       img_data_addr[pixel_index] = k->floor_color;
       pixel_number++;
-      if (pixel_number < (int)WINDOWHEIGHT - 1)
-        pixel_index += WINDOWWIDTH;
+      if (pixel_number < (int)k->window_heigth - 1)
+        pixel_index += k->window_width;
     }
     i++;
   }
@@ -188,12 +183,14 @@ int main(int ac, char **av)
     param = (t_key) { 0 };
     param.angle = -(M_PI / 2);
     parsing_init(av[1], &param);
+    param.dir_x = cos(param.angle);
+    param.dir_y = sin(param.angle);
     param.projection_distance = 0.866;
     param.plane_x = -1 * param.dir_y;
     param.plane_y = param.dir_x;
     param.mlx_ptr = mlx_init();
     if (ac < 3)
-      param.win_ptr = mlx_new_window(param.mlx_ptr, WINDOWWIDTH, WINDOWHEIGHT, "cub3D");
+      param.win_ptr = mlx_new_window(param.mlx_ptr, param.window_width, param.window_heigth, "cub3D");
     else
       save_img();
     mlx_loop_hook(param.mlx_ptr, &loop_hook, &param);

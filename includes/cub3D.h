@@ -23,10 +23,6 @@
 # include <sys/uio.h>
 # include <unistd.h>
 # include <fcntl.h>
-# define MAPHEIGHT 14
-# define MAPWIDTH 29
-# define WINDOWHEIGHT 480
-# define WINDOWWIDTH 720
 # define ROT .1
 
 typedef	struct		s_key

@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:20:39 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 12:27:17 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 13:21:30 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,8 @@ void	set_position(int i, t_key *param)
 {
 	if (i == 0 || i == -1) 
 		return ;
-	printf("i: %d\n", i);
 	param->pos_x = (double)i + 0.5;
 	param->pos_y = (double)param->map_heigth - 0.5;
-	printf("pos x: %lf\n", param->pos_x);
-	printf("pos y: %lf\n", param->pos_y);
 }
 
 int		finding_position(char *str, t_key *param)
@@ -59,36 +56,18 @@ int		finding_position(char *str, t_key *param)
 	while (str[++i])
 		if (ft_isalpha(str[i]))
 		{
-			if (str[i] == 'N')
-			{
-    			param->dir_x = cos(param->angle);
-    			param->dir_y = sin(param->angle);
-				str[i] = '0';
-				return (i);
-			}
-			else if (str[i] == 'S')
-			{
-				param->dir_x = cos(param->angle);;
-    			param->dir_y = -sin(param->angle);
-				str[i] = '0';
-				return (i);
-			}
-			else if (str[i] == 'E')
-			{
-				param->dir_x = cos(param->angle);
-    			param->dir_y = sin(param->angle);
-				str[i] = '0';
-				return (i);
-			}
-			else if (str[i] == 'Z')
-			{
-				param->dir_x = -cos(param->angle);
-    			param->dir_y = sin(param->angle);
-				str[i] = '0';
-				return (i);
-			}
+			if (str[i] == 'N' && param->pos_x == 0)
+				;
+			else if (str[i] == 'S' && param->pos_x == 0)
+				param->angle = -1 * param->angle;
+			else if (str[i] == 'E' && param->pos_x == 0)
+				param->angle = param->angle - param->angle;
+			else if (str[i] == 'W' && param->pos_x == 0)
+				param->angle = param->angle + param->angle;
 			else
 				return (-1);
+			str[i] = '0';
+			return (i);
 		}
 	return (0);
 }
@@ -160,21 +139,17 @@ int		parsing_init(char *file, t_key *param)
 			while (!ft_isdigit(*line))
 				line++;
 			r = ft_atoi(line);
-			printf("%d\n", r);
 			while (ft_isdigit(*line))
 				line++;
 			while (!ft_isdigit(*line))
 				line++;
 			g = ft_atoi(line);
-			printf("%d\n", g);
 			while (ft_isdigit(*line))
 				line++;
 			while (!ft_isdigit(*line))
 				line++;
 			b = ft_atoi(line);
-			printf("%d\n", b);
 			param->floor_color = (r << 16 | g << 8 | b);
-			printf("%X\n", param->floor_color);
 		}
 		else if (line[0] == 'C' && line[1] == ' ')
 		{
@@ -182,21 +157,17 @@ int		parsing_init(char *file, t_key *param)
 			while (!ft_isdigit(*line))
 				line++;
 			r = ft_atoi(line);
-			printf("%d\n", r);
 			while (ft_isdigit(*line))
 				line++;
 			while (!ft_isdigit(*line))
 				line++;
 			g = ft_atoi(line);
-			printf("%d\n", g);
 			while (ft_isdigit(*line))
 				line++;
 			while (!ft_isdigit(*line))
 				line++;
 			b = ft_atoi(line);
-			printf("%d\n", b);
 			param->cieling_color = (r << 16 | g << 8 | b);
-			printf("%X\n", param->cieling_color);
 		}
 		if (line[0] == '1')
 			break ;
@@ -231,7 +202,7 @@ int		parsing_init(char *file, t_key *param)
 		free(line);
 		get_next_line(fd, &line);
 	}
-	printf("map: %s\n", param->worldmap);
 	free(line);
+	close(fd);
 	return (0);
 }
