@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 15:48:46 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/03 17:29:06 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,45 +20,153 @@ int		window_quit(t_key *k)
 	return (0);
 }
 
+int		collision_check_forward(t_key *k)
+{
+	double		i;
+	double		j;
+	int			count;
+	int			check;
+
+	i = k->dir_x / 25;
+	j = k->dir_y / 25;
+	count = 0;
+	check = 0;
+	while (count <= 5)
+	{
+		if (k->worldmap[(long)(k->pos_y + j) * k->map_width + (long)(k->pos_x + i)] == '1')
+			check = 1;
+		i += i;
+		j += j;
+		count++;
+		printf("i: %lf\n", i);
+		printf("j: %lf\n", j);
+	}
+	printf("%d\n", check);
+	return (check);
+}
+
+int		collision_check_backward(t_key *k)
+{
+	double		i;
+	double		j;
+	int			count;
+	int			check;
+
+	i = k->dir_x / 25;
+	j = k->dir_y / 25;
+	count = 0;
+	check = 0;
+	while (count <= 5)
+	{
+		if (k->worldmap[(long)(k->pos_y - j) * k->map_width + (long)(k->pos_x - i)] == '1')
+			check = 1;
+		i += i;
+		j += j;
+		count++;
+		printf("i: %lf\n", i);
+		printf("j: %lf\n", j);
+	}
+	printf("%d\n", check);
+	return (check);
+}
+
+int		collision_check_left(t_key *k)
+{
+	double		i;
+	double		j;
+	int			count;
+	int			check;
+
+	i = k->dir_x / 25;
+	j = k->dir_y / 25;
+	count = 0;
+	check = 0;
+	while (count <= 5)
+	{
+		if (k->worldmap[(long)(k->pos_y - i) * k->map_width + (long)(k->pos_x - -1 * j)] == '1')
+			check = 1;
+		i += i;
+		j += j;
+		count++;
+		printf("i: %lf\n", i);
+		printf("j: %lf\n", j);
+	}
+	printf("%d\n", check);
+	return (check);
+}
+
+int		collision_check_right(t_key *k)
+{
+	double		i;
+	double		j;
+	int			count;
+	int			check;
+
+	i = k->dir_x / 25;
+	j = k->dir_y / 25;
+	count = 0;
+	check = 0;
+	while (count <= 5)
+	{
+		if (k->worldmap[(long)(k->pos_y + i) * k->map_width + (long)(k->pos_x + -1 * j)] == '1')
+			check = 1;
+		i += i;
+		j += j;
+		count++;
+		printf("i: %lf\n", i);
+		printf("j: %lf\n", j);
+	}
+	printf("%d\n", check);
+	return (check);
+}
+
 void	deal_forward(t_key *k)
 {
-	k->pos_x += k->dir_x;
-	k->pos_y += k->dir_y;
+	if (!collision_check_forward(k))
+	{
+		k->pos_x += k->dir_x;
+		k->pos_y += k->dir_y;
+	}
 }
 
 void	deal_backward(t_key *k)
 {
-	k->pos_x -= k->dir_x;
-	k->pos_y -= k->dir_y;
+	if (!collision_check_backward(k))
+	{
+		k->pos_x -= k->dir_x;
+		k->pos_y -= k->dir_y;
+	}
 }
 
 void	deal_left(t_key *k)
 {
-	k->pos_x -= -1 * k->dir_y;
-	k->pos_y -= k->dir_x;
+	if (!collision_check_left(k))
+	{
+		k->pos_x -= -1 * k->dir_y;
+		k->pos_y -= k->dir_x;
+	}
 }
 
 void	deal_right(t_key *k)
 {
-	k->pos_x += -1 * k->dir_y;
-	k->pos_y += k->dir_x;
+	if (!collision_check_right(k))
+	{
+		k->pos_x += -1 * k->dir_y;
+		k->pos_y += k->dir_x;
+	}
 }
 
 int		deal_key(int key, t_key *k)
 {
 	if (key == 53)
 		window_quit(k);
-	if (key == 13 && k->worldmap[(long)(k->pos_y + k->dir_y) * k->map_width
-	+ (long)(k->pos_x + k->dir_x)] != '1')
+	if (key == 13)
 		deal_forward(k);
-	if (key == 1 && k->worldmap[(long)(k->pos_y - k->dir_y) * k->map_width
-	+ (long)(k->pos_x - k->dir_x)] != '1')
+	if (key == 1)
 		deal_backward(k);
-	if (key == 0 && k->worldmap[(long)(k->pos_y - k->dir_x) * k->map_width
-	+ (long)(k->pos_x - -1 * k->dir_y)] != '1')
+	if (key == 0)
 		deal_left(k);
-	if (key == 2 && k->worldmap[(long)(k->pos_y + k->dir_x) * k->map_width
-	+ (long)(k->pos_x + -1 * k->dir_y)] != '1')
+	if (key == 2)
 		deal_right(k);
 	if (key == 124)
 		k->angle += ROT;
