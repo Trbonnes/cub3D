@@ -1,12 +1,11 @@
 R 720 480
-NO ./path_to_the_north_texture
-SO ./path_to_the_south_texture
-WE ./path_to_the_west_texture
-EA ./path_to_the_east_texture
+NO ./texture/NO.xpm
+SO ./texture/SO.xpm
+WE ./texture/WE.xpm
+EA ./texture/EA.xpm
 
-
-S ./path_to_the_sprite_texture
-F 255,255,255
+S ./texture/sprite.xpm
+F 255,50,50
 C 30,30,255
 
 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1

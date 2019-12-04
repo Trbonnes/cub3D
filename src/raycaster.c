@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 17:29:06 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/04 18:19:10 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,13 @@ int		collision_check_forward(t_key *k)
 	check = 0;
 	while (count <= 5)
 	{
-		if (k->worldmap[(long)(k->pos_y + j) * k->map_width + (long)(k->pos_x + i)] == '1')
+		if (k->worldmap[(long)(k->pos_y + j) * k->map_width
+		+ (long)(k->pos_x + i)] == '1')
 			check = 1;
 		i += i;
 		j += j;
 		count++;
-		printf("i: %lf\n", i);
-		printf("j: %lf\n", j);
 	}
-	printf("%d\n", check);
 	return (check);
 }
 
@@ -58,15 +56,13 @@ int		collision_check_backward(t_key *k)
 	check = 0;
 	while (count <= 5)
 	{
-		if (k->worldmap[(long)(k->pos_y - j) * k->map_width + (long)(k->pos_x - i)] == '1')
+		if (k->worldmap[(long)(k->pos_y - j) * k->map_width
+		+ (long)(k->pos_x - i)] == '1')
 			check = 1;
 		i += i;
 		j += j;
 		count++;
-		printf("i: %lf\n", i);
-		printf("j: %lf\n", j);
 	}
-	printf("%d\n", check);
 	return (check);
 }
 
@@ -83,15 +79,13 @@ int		collision_check_left(t_key *k)
 	check = 0;
 	while (count <= 5)
 	{
-		if (k->worldmap[(long)(k->pos_y - i) * k->map_width + (long)(k->pos_x - -1 * j)] == '1')
+		if (k->worldmap[(long)(k->pos_y - i) * k->map_width
+		+ (long)(k->pos_x - -1 * j)] == '1')
 			check = 1;
 		i += i;
 		j += j;
 		count++;
-		printf("i: %lf\n", i);
-		printf("j: %lf\n", j);
 	}
-	printf("%d\n", check);
 	return (check);
 }
 
@@ -108,15 +102,13 @@ int		collision_check_right(t_key *k)
 	check = 0;
 	while (count <= 5)
 	{
-		if (k->worldmap[(long)(k->pos_y + i) * k->map_width + (long)(k->pos_x + -1 * j)] == '1')
+		if (k->worldmap[(long)(k->pos_y + i) * k->map_width
+		+ (long)(k->pos_x + -1 * j)] == '1')
 			check = 1;
 		i += i;
 		j += j;
 		count++;
-		printf("i: %lf\n", i);
-		printf("j: %lf\n", j);
 	}
-	printf("%d\n", check);
 	return (check);
 }
 
@@ -245,21 +237,53 @@ void	dda_init(t_key *k, t_dda *dda, int i)
 
 void	wall_calculate(t_key *k, t_dda *dda, t_img *img_data)
 {
-	if (dda->wall_side == 0)
+	if (dda->wall_side == 'E' || dda->wall_side == 'W')
 	{
 		dda->wall_distance = (dda->map_x - k->pos_x
 		+ (1 - dda->step_x) / 2) / dda->ray_dir_x;
+		dda->wall_x = k->pos_y + dda->wall_distance * dda->ray_dir_y;
+		dda->wall_x -= (long)dda->wall_x;
 	}
 	else
 	{
 		dda->wall_distance = (dda->map_y - k->pos_y
 		+ (1 - dda->step_y) / 2) / dda->ray_dir_y;
+		dda->wall_x = k->pos_x + dda->wall_distance * dda->ray_dir_x;
+		dda->wall_x -= (long)dda->wall_x;
 	}
 	dda->wall_height = k->window_heigth / dda->wall_distance;
-	if (dda->wall_side == 0)
-		img_data->wall_color = 0x00000000;
+	if (dda->wall_side == 'S')
+	{
+		dda->texture_x = (long)(dda->wall_x * (double)k->texture_so.width);
+		dda->texture_y = (long)(dda->wall_height * k->texture_so.height / k->window_heigth);
+		if (dda->ray_dir_y < 0)
+			dda->texture_x = k->texture_so.width - dda->texture_x - 1;
+		img_data->wall_color = /*0x00000000*/k->texture_so.img_data[dda->texture_y * k->texture_so.width + dda->texture_x];
+	}
+	else if (dda->wall_side == 'N')
+	{
+		dda->texture_x = (long)(dda->wall_x * (double)k->texture_no.width);
+		dda->texture_y = (long)(dda->wall_height * k->texture_no.height / k->window_heigth);
+		if (dda->ray_dir_y < 0)
+			dda->texture_x = k->texture_no.width - dda->texture_x - 1;
+		img_data->wall_color = /*0x00ffff00*/k->texture_no.img_data[dda->texture_y * k->texture_no.width + dda->texture_x];
+	}
+	else if (dda->wall_side == 'E')
+	{
+		dda->texture_x = (long)(dda->wall_x * (double)k->texture_ea.width);
+		dda->texture_y = (long)(dda->wall_height * k->texture_ea.height / k->window_heigth);
+		if (dda->ray_dir_x > 0)
+			dda->texture_x = k->texture_ea.width - dda->texture_x - 1;
+		img_data->wall_color = /*0x00ff0000*/k->texture_ea.img_data[dda->texture_y * k->texture_ea.width + dda->texture_x];
+	}
 	else
-		img_data->wall_color = 0x00ff0000;
+	{
+		dda->texture_x = (long)(dda->wall_x * (double)k->texture_we.width);
+		dda->texture_y = (long)(dda->wall_height * k->texture_we.height / k->window_heigth);
+		if (dda->ray_dir_x > 0)
+			dda->texture_x = k->texture_we.width - dda->texture_x - 1;
+		img_data->wall_color = /*0x0000ffff*/k->texture_we.img_data[dda->texture_y * k->texture_we.width + dda->texture_x];
+	}
 }
 
 void	wall_loop(t_key *k, t_dda *dda)
@@ -270,13 +294,19 @@ void	wall_loop(t_key *k, t_dda *dda)
 		{
 			dda->dist_x += dda->decalage_ray_x;
 			dda->map_x += dda->step_x;
-			dda->wall_side = 0;
+			if (dda->map_x > k->pos_x)
+				dda->wall_side = 'W';
+			else
+				dda->wall_side = 'E';
 		}
 		else
 		{
 			dda->dist_y += dda->decalage_ray_y;
 			dda->map_y += dda->step_y;
-			dda->wall_side = 1;
+			if (dda->map_y > k->pos_y)
+				dda->wall_side = 'N';
+			else
+				dda->wall_side = 'S';
 		}
 		if (k->worldmap[dda->map_y * k->map_width + dda->map_x] == '1')
 			dda->wall = 1;

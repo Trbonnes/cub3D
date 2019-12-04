@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/03 15:53:58 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/04 17:12:38 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,17 @@
 # include <unistd.h>
 # include <fcntl.h>
 # define ROT .1
+
+typedef struct		s_img
+{
+	int				wall_color;
+	int				*img_data;
+	int				size_line;
+	int				bits_per_pixel;
+	int				endian;
+	int				height;
+	int				width;
+}					t_img;
 
 typedef	struct		s_key
 {
@@ -51,16 +62,11 @@ typedef	struct		s_key
 	double			plane_y;
 	double			camera_x;
 	char			*worldmap;
+	t_img			texture_no;
+	t_img			texture_so;
+	t_img			texture_ea;
+	t_img			texture_we;
 }					t_key;
-
-typedef struct		s_img
-{
-	int				wall_color;
-	int				*img_data;
-	int				size_line;
-	int				bits_per_pixel;
-	int				endian;
-}					t_img;
 
 typedef struct		s_dda
 {
@@ -73,11 +79,15 @@ typedef struct		s_dda
 	int				step_x;
 	int				step_y;
 	int				wall;
-	int				wall_side;
+	char			wall_side;
 	long			map_x;
 	long			map_y;
 	double			wall_distance;
 	long			wall_height;
+	double			wall_x;
+	double			wall_y;
+	long			texture_x;
+	long			texture_y;
 }					t_dda;
 
 int					window_quit(t_key *k);
