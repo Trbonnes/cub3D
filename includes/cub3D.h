@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/05 11:55:54 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/05 13:43:44 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ typedef struct		s_dda
 	int				sprite;
 	double			sprite_distance;
 	double			sprite_height;
-	char			sprite_side;
 	long			sprite_x;
 	long			sprite_y;
 

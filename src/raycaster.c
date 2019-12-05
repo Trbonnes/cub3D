@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/05 12:33:20 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/05 15:36:45 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ int		collision_check_forward(t_key *k)
 	int			count;
 	int			check;
 
-	i = k->dir_x / 25;
-	j = k->dir_y / 25;
+	i = k->dir_x / 35;
+	j = k->dir_y / 35;
 	count = 0;
 	check = 0;
 	while (count <= 5)
@@ -50,8 +50,8 @@ int		collision_check_backward(t_key *k)
 	int			count;
 	int			check;
 
-	i = k->dir_x / 25;
-	j = k->dir_y / 25;
+	i = k->dir_x / 35;
+	j = k->dir_y / 35;
 	count = 0;
 	check = 0;
 	while (count <= 5)
@@ -73,8 +73,8 @@ int		collision_check_left(t_key *k)
 	int			count;
 	int			check;
 
-	i = k->dir_x / 25;
-	j = k->dir_y / 25;
+	i = k->dir_x / 35;
+	j = k->dir_y / 35;
 	count = 0;
 	check = 0;
 	while (count <= 5)
@@ -96,8 +96,8 @@ int		collision_check_right(t_key *k)
 	int			count;
 	int			check;
 
-	i = k->dir_x / 25;
-	j = k->dir_y / 25;
+	i = k->dir_x / 35;
+	j = k->dir_y / 35;
 	count = 0;
 	check = 0;
 	while (count <= 5)
@@ -188,7 +188,8 @@ void	img_put_sprite(t_key *k, int i, t_img *img_data, t_dda *dda)
 	{
 		dda->texture_y = (long)(texture_index * k->texture_sprite.height / dda->sprite_height);
 		img_data->img_data[pixel_index] = k->texture_sprite.img_data[dda->texture_y * k->texture_sprite.width + dda->texture_x];
-		pixel_index += k->window_width;
+		if (pixel_number < k->window_heigth - 1)
+			pixel_index += k->window_width;
 		texture_index++;
 	}
 }
@@ -200,16 +201,18 @@ void	img_create(t_key *k, int i, t_img *img_data, t_dda *dda)
 	int		j;
 	int		texture_index;
 
-	pixel_number = 0;
+	pixel_number = -1;
 	pixel_index = i;
+	if (dda->wall_height > k->window_heigth)
+		dda->wall_height = k->window_heigth;
 	j = (int)((k->window_heigth - dda->wall_height) / 2);
 	texture_index = 0;
-	while (pixel_number++ < j)
+	while (++pixel_number < j)
 	{
 		img_data->img_data[pixel_index] = k->cieling_color;
 		pixel_index += k->window_width;
 	}
-	while (pixel_number++ <= (j + (int)dda->wall_height))
+	while (++pixel_number <= (j + (int)dda->wall_height))
 	{
 		if (dda->wall_side == 'S')
 		{
@@ -231,10 +234,11 @@ void	img_create(t_key *k, int i, t_img *img_data, t_dda *dda)
 			dda->texture_y = (long)(texture_index * k->texture_we.height / dda->wall_height);
 			img_data->img_data[pixel_index] = k->texture_we.img_data[dda->texture_y * k->texture_we.width + dda->texture_x];
 		}
-		pixel_index += k->window_width;
+		if (pixel_number < k->window_heigth - 1)
+			pixel_index += k->window_width;
 		texture_index++;
 	}
-	while (pixel_number++ <= (int)k->window_heigth)
+	while (++pixel_number <= (int)k->window_heigth)
 	{
 		img_data->img_data[pixel_index] = k->floor_color;
 		if (pixel_number < (int)k->window_heigth - 1)
@@ -276,12 +280,13 @@ void	dda_init(t_key *k, t_dda *dda, int i)
 	dda->decalage_ray_x = fabs(1 / dda->ray_dir_x);
 	dda->decalage_ray_y = fabs(1 / dda->ray_dir_y);
 	dda->wall = 0;
+	dda->sprite = 0;
 	ray_init(k, dda);
 }
 
 void	sprite_calculate(t_key *k, t_dda *dda)
 {
-	if (dda->sprite_side == 'E' || dda->sprite_side == 'W')
+	if (dda->dist_x < dda->dist_y)
 	{
 		dda->sprite_distance = (dda->map_x - k->pos_x
 		+ (1 - dda->step_x) / 2) / dda->ray_dir_x;
@@ -297,14 +302,6 @@ void	sprite_calculate(t_key *k, t_dda *dda)
 	}
 	dda->sprite_height = k->window_heigth / dda->sprite_distance;
 	dda->texture_x = (long)(dda->sprite_x * (double)k->texture_sprite.width);
-	if (dda->sprite_side == 'S' && dda->ray_dir_y > 0)
-		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
-	else if (dda->sprite_side == 'N' && dda->ray_dir_y > 0)
-		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
-	else if (dda->sprite_side == 'E' && dda->ray_dir_x < 0)
-		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
-	else if (dda->ray_dir_x < 0)
-		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
 }
 
 void	sprite_loop(t_key *k, t_dda *dda)
@@ -315,19 +312,11 @@ void	sprite_loop(t_key *k, t_dda *dda)
 		{
 			dda->dist_x += dda->decalage_ray_x;
 			dda->map_x += dda->step_x;
-			if (dda->map_x > k->pos_x)
-				dda->sprite_side = 'W';
-			else
-				dda->sprite_side = 'E';
 		}
 		else
 		{
 			dda->dist_y += dda->decalage_ray_y;
 			dda->map_y += dda->step_y;
-			if (dda->map_y > k->pos_y)
-				dda->sprite_side = 'N';
-			else
-				dda->sprite_side = 'S';
 		}
 		if (k->worldmap[dda->map_y * k->map_width + dda->map_x] == '2')
 			dda->sprite = 1;
@@ -421,6 +410,7 @@ void	window_loop(t_key *k, t_dda *dda, t_img *img_data)
 		sprite_loop(k, dda);
 		if (dda->sprite == 1)
 		{
+
 			sprite_calculate(k, dda);
 			img_put_sprite(k, i, img_data, dda);
 		}
