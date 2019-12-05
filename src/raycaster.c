@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/05 09:27:09 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/05 12:33:20 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,28 @@ int		deal_key(int key, t_key *k)
 	return (0);
 }
 
+void	img_put_sprite(t_key *k, int i, t_img *img_data, t_dda *dda)
+{
+	int		pixel_index;
+	int		pixel_number;
+	int		j;
+	int		texture_index;
+
+	pixel_number = 0;
+	pixel_index = i;
+	j = (int)((k->window_heigth - dda->sprite_height) / 2);
+	texture_index = 0;
+	while (pixel_number++ < j)
+		pixel_index += k->window_width;
+	while (pixel_number++ <= (j + (int)dda->sprite_height))
+	{
+		dda->texture_y = (long)(texture_index * k->texture_sprite.height / dda->sprite_height);
+		img_data->img_data[pixel_index] = k->texture_sprite.img_data[dda->texture_y * k->texture_sprite.width + dda->texture_x];
+		pixel_index += k->window_width;
+		texture_index++;
+	}
+}
+
 void	img_create(t_key *k, int i, t_img *img_data, t_dda *dda)
 {
 	int		pixel_index;
@@ -257,6 +279,63 @@ void	dda_init(t_key *k, t_dda *dda, int i)
 	ray_init(k, dda);
 }
 
+void	sprite_calculate(t_key *k, t_dda *dda)
+{
+	if (dda->sprite_side == 'E' || dda->sprite_side == 'W')
+	{
+		dda->sprite_distance = (dda->map_x - k->pos_x
+		+ (1 - dda->step_x) / 2) / dda->ray_dir_x;
+		dda->sprite_x = k->pos_y + dda->sprite_distance * dda->ray_dir_y;
+		dda->sprite_x -= (long)dda->sprite_x;
+	}
+	else
+	{
+		dda->sprite_distance = (dda->map_y - k->pos_y
+		+ (1 - dda->step_y) / 2) / dda->ray_dir_y;
+		dda->sprite_x = k->pos_x + dda->sprite_distance * dda->ray_dir_x;
+		dda->sprite_x -= (long)dda->sprite_x;
+	}
+	dda->sprite_height = k->window_heigth / dda->sprite_distance;
+	dda->texture_x = (long)(dda->sprite_x * (double)k->texture_sprite.width);
+	if (dda->sprite_side == 'S' && dda->ray_dir_y > 0)
+		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
+	else if (dda->sprite_side == 'N' && dda->ray_dir_y > 0)
+		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
+	else if (dda->sprite_side == 'E' && dda->ray_dir_x < 0)
+		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
+	else if (dda->ray_dir_x < 0)
+		dda->texture_x = k->texture_sprite.width - dda->texture_x - 1;
+}
+
+void	sprite_loop(t_key *k, t_dda *dda)
+{
+	while (dda->sprite != 1)
+	{
+		if (dda->dist_x < dda->dist_y)
+		{
+			dda->dist_x += dda->decalage_ray_x;
+			dda->map_x += dda->step_x;
+			if (dda->map_x > k->pos_x)
+				dda->sprite_side = 'W';
+			else
+				dda->sprite_side = 'E';
+		}
+		else
+		{
+			dda->dist_y += dda->decalage_ray_y;
+			dda->map_y += dda->step_y;
+			if (dda->map_y > k->pos_y)
+				dda->sprite_side = 'N';
+			else
+				dda->sprite_side = 'S';
+		}
+		if (k->worldmap[dda->map_y * k->map_width + dda->map_x] == '2')
+			dda->sprite = 1;
+		if (k->worldmap[dda->map_y * k->map_width + dda->map_x] == '1')
+			break ;
+	}
+}
+
 void	wall_calculate(t_key *k, t_dda *dda)
 {
 	if (dda->wall_side == 'E' || dda->wall_side == 'W')
@@ -338,6 +417,13 @@ void	window_loop(t_key *k, t_dda *dda, t_img *img_data)
 		wall_loop(k, dda);
 		wall_calculate(k, dda);
 		img_create(k, i, img_data, dda);
+		dda_init(k, dda, i);
+		sprite_loop(k, dda);
+		if (dda->sprite == 1)
+		{
+			sprite_calculate(k, dda);
+			img_put_sprite(k, i, img_data, dda);
+		}
 		i++;
 	}
 }

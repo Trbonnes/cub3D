@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/05 09:13:19 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/05 11:55:54 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ typedef	struct		s_key
 	t_img			texture_so;
 	t_img			texture_ea;
 	t_img			texture_we;
+	t_img			texture_sprite;
 }					t_key;
 
 typedef struct		s_dda
@@ -87,6 +88,13 @@ typedef struct		s_dda
 	double			wall_y;
 	long			texture_x;
 	long			texture_y;
+	int				sprite;
+	double			sprite_distance;
+	double			sprite_height;
+	char			sprite_side;
+	long			sprite_x;
+	long			sprite_y;
+
 }					t_dda;
 
 int					window_quit(t_key *k);
