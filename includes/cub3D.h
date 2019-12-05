@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/04 17:12:38 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/05 09:13:19 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 
 typedef struct		s_img
 {
-	int				wall_color;
 	int				*img_data;
 	int				size_line;
 	int				bits_per_pixel;

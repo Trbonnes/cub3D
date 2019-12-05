@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/04 18:19:10 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/05 09:27:09 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,24 +171,46 @@ int		deal_key(int key, t_key *k)
 	return (0);
 }
 
-void	img_create(t_key *k, int i, t_img *img_data, int wall_height)
+void	img_create(t_key *k, int i, t_img *img_data, t_dda *dda)
 {
 	int		pixel_index;
 	int		pixel_number;
 	int		j;
+	int		texture_index;
 
 	pixel_number = 0;
 	pixel_index = i;
-	j = (int)((k->window_heigth - wall_height) / 2);
+	j = (int)((k->window_heigth - dda->wall_height) / 2);
+	texture_index = 0;
 	while (pixel_number++ < j)
 	{
 		img_data->img_data[pixel_index] = k->cieling_color;
 		pixel_index += k->window_width;
 	}
-	while (pixel_number++ <= (j + (int)wall_height))
+	while (pixel_number++ <= (j + (int)dda->wall_height))
 	{
-		img_data->img_data[pixel_index] = img_data->wall_color;
+		if (dda->wall_side == 'S')
+		{
+			dda->texture_y = (long)(texture_index * k->texture_so.height / dda->wall_height);
+			img_data->img_data[pixel_index] = k->texture_so.img_data[dda->texture_y * k->texture_so.width + dda->texture_x];
+		}
+		else if (dda->wall_side == 'N')
+		{
+			dda->texture_y = (long)(texture_index * k->texture_no.height / dda->wall_height);
+			img_data->img_data[pixel_index] = k->texture_no.img_data[dda->texture_y * k->texture_no.width + dda->texture_x];
+		}
+		else if (dda->wall_side == 'E')
+		{
+			dda->texture_y = (long)(texture_index * k->texture_ea.height / dda->wall_height);
+			img_data->img_data[pixel_index] = k->texture_ea.img_data[dda->texture_y * k->texture_ea.width + dda->texture_x];
+		}
+		else
+		{
+			dda->texture_y = (long)(texture_index * k->texture_we.height / dda->wall_height);
+			img_data->img_data[pixel_index] = k->texture_we.img_data[dda->texture_y * k->texture_we.width + dda->texture_x];
+		}
 		pixel_index += k->window_width;
+		texture_index++;
 	}
 	while (pixel_number++ <= (int)k->window_heigth)
 	{
@@ -235,7 +257,7 @@ void	dda_init(t_key *k, t_dda *dda, int i)
 	ray_init(k, dda);
 }
 
-void	wall_calculate(t_key *k, t_dda *dda, t_img *img_data)
+void	wall_calculate(t_key *k, t_dda *dda)
 {
 	if (dda->wall_side == 'E' || dda->wall_side == 'W')
 	{
@@ -255,34 +277,26 @@ void	wall_calculate(t_key *k, t_dda *dda, t_img *img_data)
 	if (dda->wall_side == 'S')
 	{
 		dda->texture_x = (long)(dda->wall_x * (double)k->texture_so.width);
-		dda->texture_y = (long)(dda->wall_height * k->texture_so.height / k->window_heigth);
-		if (dda->ray_dir_y < 0)
+		if (dda->ray_dir_y > 0)
 			dda->texture_x = k->texture_so.width - dda->texture_x - 1;
-		img_data->wall_color = /*0x00000000*/k->texture_so.img_data[dda->texture_y * k->texture_so.width + dda->texture_x];
 	}
 	else if (dda->wall_side == 'N')
 	{
 		dda->texture_x = (long)(dda->wall_x * (double)k->texture_no.width);
-		dda->texture_y = (long)(dda->wall_height * k->texture_no.height / k->window_heigth);
-		if (dda->ray_dir_y < 0)
+		if (dda->ray_dir_y > 0)
 			dda->texture_x = k->texture_no.width - dda->texture_x - 1;
-		img_data->wall_color = /*0x00ffff00*/k->texture_no.img_data[dda->texture_y * k->texture_no.width + dda->texture_x];
 	}
 	else if (dda->wall_side == 'E')
 	{
 		dda->texture_x = (long)(dda->wall_x * (double)k->texture_ea.width);
-		dda->texture_y = (long)(dda->wall_height * k->texture_ea.height / k->window_heigth);
-		if (dda->ray_dir_x > 0)
+		if (dda->ray_dir_x < 0)
 			dda->texture_x = k->texture_ea.width - dda->texture_x - 1;
-		img_data->wall_color = /*0x00ff0000*/k->texture_ea.img_data[dda->texture_y * k->texture_ea.width + dda->texture_x];
 	}
 	else
 	{
 		dda->texture_x = (long)(dda->wall_x * (double)k->texture_we.width);
-		dda->texture_y = (long)(dda->wall_height * k->texture_we.height / k->window_heigth);
-		if (dda->ray_dir_x > 0)
+		if (dda->ray_dir_x < 0)
 			dda->texture_x = k->texture_we.width - dda->texture_x - 1;
-		img_data->wall_color = /*0x0000ffff*/k->texture_we.img_data[dda->texture_y * k->texture_we.width + dda->texture_x];
 	}
 }
 
@@ -322,8 +336,8 @@ void	window_loop(t_key *k, t_dda *dda, t_img *img_data)
 	{
 		dda_init(k, dda, i);
 		wall_loop(k, dda);
-		wall_calculate(k, dda, img_data);
-		img_create(k, i, img_data, dda->wall_height);
+		wall_calculate(k, dda);
+		img_create(k, i, img_data, dda);
 		i++;
 	}
 }
