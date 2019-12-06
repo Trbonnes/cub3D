@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/06 11:46:37 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/06 16:29:03 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,17 @@ typedef struct		s_img
 	int				height;
 	int				width;
 }					t_img;
+
+typedef	struct		s_sprite_put
+{
+	int		start_y;
+	int		end_y;
+	int		start_x;
+	int		end_x;
+	int		y;
+	int		d;
+	int 	stripe;
+}					t_sprite_put;
 
 typedef	struct		s_sprite
 {

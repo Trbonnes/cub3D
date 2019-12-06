@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/06 15:12:41 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/06 17:27:23 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,96 +171,134 @@ int		deal_key(int key, t_key *k)
 	return (0);
 }
 
-void	img_put_sprite(t_key *k, double	z_buffer[k->window_width + 1], t_img *img_data, t_dda *dda)
+void	put_sprite_init(t_key *k, t_sprite_put *put, t_dda *dda)
 {
-	int		start_y;
-	int		end_y;
-	int		start_x;
-	int		end_x;
-	int		stripe;
-	int		y;
-	int		d;
+	put->start_y = -1 * dda->sprite_height / 2 + k->window_heigth / 2;
+	if (put->start_y < 0)
+		put->start_y = 0;
+	put->end_y = dda->sprite_height / 2 + k->window_heigth / 2;
+	if (put->end_y >= k->window_heigth)
+		put->end_y = k->window_heigth - 1;
+	put->start_x = -1 * dda->sprite_width / 2 + dda->sprite_screen_x;
+	if (put->start_x < 0)
+		put->start_x = 0;
+	put->end_x = dda->sprite_width / 2 + dda->sprite_screen_x;
+	if (put->end_x >= k->window_width)
+		put->end_x = k->window_width - 1;
+}
 
-	start_y = -1 * dda->sprite_height / 2 + k->window_heigth / 2;
-    if(start_y < 0) 
-		start_y = 0;
-    end_y = dda->sprite_height / 2 + k->window_heigth / 2;
-    if(end_y >= k->window_heigth) 
-		end_y = k->window_heigth - 1;
-	start_x = -1* dda->sprite_width / 2 + dda->sprite_screen_x;
-    if(start_x < 0)
-		start_x = 0;
-    end_x = dda->sprite_width / 2 + dda->sprite_screen_x;
-    if(end_x >= k->window_width)
-		end_x = k->window_width - 1;
-	stripe = start_x;
-	while (stripe < end_x)
+void	put_sprite_loop(t_key *k, t_sprite_put *put,
+t_img *img_data, t_dda *dda)
+{
+	put->y = put->start_y;
+	while (put->y < put->end_y)
 	{
-		dda->texture_x = (int)(256 * (stripe - (-1 * dda->sprite_width / 2 + dda->sprite_screen_x)) * k->texture_sprite.width / dda->sprite_width) / 256;
-        if(dda->transform_y > 0 && stripe > 0 && stripe < k->window_width && dda->transform_y < z_buffer[stripe])
-		{
-			y = start_y;
-			while (y < end_y)
-			{
-				d = (y) * 256 - k->window_heigth * 128 + dda->sprite_height * 128;
-				dda->texture_y = ((d * k->texture_sprite.height) / dda->sprite_height) / 256;
-				if (k->texture_sprite.img_data[dda->texture_y * k->texture_sprite.width + dda->texture_x] != 0)
-					img_data->img_data[y * k->window_width + stripe] = k->texture_sprite.img_data[dda->texture_y * k->texture_sprite.width + dda->texture_x];
-				y++;
-			}
-		}
-		stripe++;
+		put->d = put->y * 256 - k->window_heigth
+		* 128 + dda->sprite_height * 128;
+		dda->texture_y = (put->d * k->texture_sprite.height
+		/ dda->sprite_height) / 256;
+		if (k->texture_sprite.img_data[dda->texture_y
+		* k->texture_sprite.width + dda->texture_x] != 0)
+			img_data->img_data[put->y * k->window_width + put->stripe] =
+			k->texture_sprite.img_data[dda->texture_y
+			* k->texture_sprite.width + dda->texture_x];
+		put->y++;
 	}
+}
+
+void	img_put_sprite(t_key *k, double *z_buffer, t_img *img_data, t_dda *dda)
+{
+	t_sprite_put	put;
+
+	put = (t_sprite_put) { 0 };
+	put_sprite_init(k, &put, dda);
+	put.stripe = put.start_x;
+	while (put.stripe < put.end_x)
+	{
+		dda->texture_x = (int)(256 * (put.stripe - (-1
+		* dda->sprite_width / 2 + dda->sprite_screen_x))
+		* k->texture_sprite.width / dda->sprite_width) / 256;
+		if (dda->transform_y > 0 && put.stripe > 0
+		&& put.stripe < k->window_width
+		&& dda->transform_y < z_buffer[put.stripe])
+			put_sprite_loop(k, &put, img_data, dda);
+		put.stripe++;
+	}
+}
+
+void	pick_s_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
+{
+	dda->texture_y = (long)(pixel_index[1]
+	* k->texture_so.height / dda->wall_height);
+	img_data->img_data[pixel_index[0]] = k->texture_so.img_data[dda->texture_y
+	* k->texture_so.width + dda->texture_x];
+}
+
+void	pick_n_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
+{
+	dda->texture_y = (long)(pixel_index[1]
+	* k->texture_no.height / dda->wall_height);
+	img_data->img_data[pixel_index[0]] = k->texture_no.img_data[dda->texture_y
+	* k->texture_no.width + dda->texture_x];
+}
+
+void	pick_e_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
+{
+	dda->texture_y = (long)(pixel_index[1]
+	* k->texture_ea.height / dda->wall_height);
+	img_data->img_data[pixel_index[0]] = k->texture_ea.img_data[dda->texture_y
+	* k->texture_ea.width + dda->texture_x];
+}
+
+void	pick_w_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
+{
+	dda->texture_y = (long)(pixel_index[1]
+	* k->texture_we.height / dda->wall_height);
+	img_data->img_data[pixel_index[0]] = k->texture_we.img_data[dda->texture_y
+	* k->texture_we.width + dda->texture_x];
+}
+
+void	ceiling_loop(t_key *k, t_img *img_data, int *pixel_index)
+{
+	img_data->img_data[pixel_index[0]] = k->cieling_color;
+	pixel_index[0] += k->window_width;
+}
+
+void	floor_loop(t_key *k, t_img *img_data,
+int *pixel_index, int pixel_number)
+{
+	img_data->img_data[pixel_index[0]] = k->floor_color;
+	if (pixel_number < (int)k->window_heigth - 1)
+		pixel_index[0] += k->window_width;
 }
 
 void	img_create(t_key *k, int i, t_img *img_data, t_dda *dda)
 {
-	int		pixel_index;
-	int		pixel_number;
+	int		pixel[3];
 	int		j;
-	int		texture_index;
 
-	pixel_number = -1;
-	pixel_index = i;
+	pixel[2] = -1;
+	pixel[0] = i;
+	pixel[1] = 0;
 	j = (int)((k->window_heigth - dda->wall_height) / 2);
-	texture_index = 0;
-	while (++pixel_number < j)
-	{
-		img_data->img_data[pixel_index] = k->cieling_color;
-		pixel_index += k->window_width;
-	}
-	while (++pixel_number <= (j + (int)dda->wall_height) && pixel_number < k->window_heigth)
+	while (++pixel[2] < j)
+		ceiling_loop(k, img_data, pixel);
+	while (++pixel[2] <= j + dda->wall_height && pixel[2] < k->window_heigth)
 	{
 		if (dda->wall_side == 'S')
-		{
-			dda->texture_y = (long)(texture_index * k->texture_so.height / dda->wall_height);
-			img_data->img_data[pixel_index] = k->texture_so.img_data[dda->texture_y * k->texture_so.width + dda->texture_x];
-		}
+			pick_s_texture(k, dda, img_data, pixel);
 		else if (dda->wall_side == 'N')
-		{
-			dda->texture_y = (long)(texture_index * k->texture_no.height / dda->wall_height);
-			img_data->img_data[pixel_index] = k->texture_no.img_data[dda->texture_y * k->texture_no.width + dda->texture_x];
-		}
+			pick_n_texture(k, dda, img_data, pixel);
 		else if (dda->wall_side == 'E')
-		{
-			dda->texture_y = (long)(texture_index * k->texture_ea.height / dda->wall_height);
-			img_data->img_data[pixel_index] = k->texture_ea.img_data[dda->texture_y * k->texture_ea.width + dda->texture_x];
-		}
+			pick_e_texture(k, dda, img_data, pixel);
 		else
-		{
-			dda->texture_y = (long)(texture_index * k->texture_we.height / dda->wall_height);
-			img_data->img_data[pixel_index] = k->texture_we.img_data[dda->texture_y * k->texture_we.width + dda->texture_x];
-		}
-		if (pixel_number < k->window_heigth - 1)
-			pixel_index += k->window_width;
-		texture_index++;
+			pick_w_texture(k, dda, img_data, pixel);
+		if (pixel[2] < k->window_heigth - 1)
+			pixel[0] += k->window_width;
+		pixel[1]++;
 	}
-	while (++pixel_number <= (int)k->window_heigth)
-	{
-		img_data->img_data[pixel_index] = k->floor_color;
-		if (pixel_number < (int)k->window_heigth - 1)
-			pixel_index += k->window_width;
-	}
+	while (++pixel[2] <= (int)k->window_heigth)
+		floor_loop(k, img_data, pixel, pixel[2]);
 }
 
 void	ray_init(t_key *k, t_dda *dda)
@@ -300,47 +338,65 @@ void	dda_init(t_key *k, t_dda *dda, int i)
 	ray_init(k, dda);
 }
 
+void	wall_side_ew(t_key *k, t_dda *dda)
+{
+	dda->wall_distance = (dda->map_x - k->pos_x
+	+ (1 - dda->step_x) / 2) / dda->ray_dir_x;
+	dda->wall_x = k->pos_y + dda->wall_distance * dda->ray_dir_y;
+	dda->wall_x -= (long)dda->wall_x;
+}
+
+void	wall_side_ns(t_key *k, t_dda *dda)
+{
+	dda->wall_distance = (dda->map_y - k->pos_y
+	+ (1 - dda->step_y) / 2) / dda->ray_dir_y;
+	dda->wall_x = k->pos_x + dda->wall_distance * dda->ray_dir_x;
+	dda->wall_x -= (long)dda->wall_x;
+}
+
+void	wall_texture_s(t_key *k, t_dda *dda)
+{
+	dda->texture_x = (long)(dda->wall_x * (double)k->texture_so.width);
+	if (dda->ray_dir_y > 0)
+		dda->texture_x = k->texture_so.width - dda->texture_x - 1;
+}
+
+void	wall_texture_n(t_key *k, t_dda *dda)
+{
+	dda->texture_x = (long)(dda->wall_x * (double)k->texture_no.width);
+	if (dda->ray_dir_y > 0)
+		dda->texture_x = k->texture_no.width - dda->texture_x - 1;
+}
+
+void	wall_texture_e(t_key *k, t_dda *dda)
+{
+	dda->texture_x = (long)(dda->wall_x * (double)k->texture_ea.width);
+	if (dda->ray_dir_x < 0)
+		dda->texture_x = k->texture_ea.width - dda->texture_x - 1;
+}
+
+void	wall_texture_w(t_key *k, t_dda *dda)
+{
+	dda->texture_x = (long)(dda->wall_x * (double)k->texture_we.width);
+	if (dda->ray_dir_x < 0)
+		dda->texture_x = k->texture_we.width - dda->texture_x - 1;
+}
+
 void	wall_calculate(t_key *k, t_dda *dda)
 {
 	if (dda->wall_side == 'E' || dda->wall_side == 'W')
-	{
-		dda->wall_distance = (dda->map_x - k->pos_x
-		+ (1 - dda->step_x) / 2) / dda->ray_dir_x;
-		dda->wall_x = k->pos_y + dda->wall_distance * dda->ray_dir_y;
-		dda->wall_x -= (long)dda->wall_x;
-	}
+		wall_side_ew(k, dda);
 	else
-	{
-		dda->wall_distance = (dda->map_y - k->pos_y
-		+ (1 - dda->step_y) / 2) / dda->ray_dir_y;
-		dda->wall_x = k->pos_x + dda->wall_distance * dda->ray_dir_x;
-		dda->wall_x -= (long)dda->wall_x;
-	}
+		wall_side_ns(k, dda);
 	dda->wall_height = k->window_heigth / dda->wall_distance;
 	if (dda->wall_side == 'S')
-	{
-		dda->texture_x = (long)(dda->wall_x * (double)k->texture_so.width);
-		if (dda->ray_dir_y > 0)
-			dda->texture_x = k->texture_so.width - dda->texture_x - 1;
-	}
+		wall_texture_s(k, dda);
 	else if (dda->wall_side == 'N')
-	{
-		dda->texture_x = (long)(dda->wall_x * (double)k->texture_no.width);
-		if (dda->ray_dir_y > 0)
-			dda->texture_x = k->texture_no.width - dda->texture_x - 1;
-	}
+		wall_texture_n(k, dda);
 	else if (dda->wall_side == 'E')
-	{
-		dda->texture_x = (long)(dda->wall_x * (double)k->texture_ea.width);
-		if (dda->ray_dir_x < 0)
-			dda->texture_x = k->texture_ea.width - dda->texture_x - 1;
-	}
+		wall_texture_e(k, dda);
 	else
-	{
-		dda->texture_x = (long)(dda->wall_x * (double)k->texture_we.width);
-		if (dda->ray_dir_x < 0)
-			dda->texture_x = k->texture_we.width - dda->texture_x - 1;
-	}
+		wall_texture_w(k, dda);
 }
 
 void	wall_loop(t_key *k, t_dda *dda)
@@ -370,9 +426,35 @@ void	wall_loop(t_key *k, t_dda *dda)
 	}
 }
 
-void	window_loop(t_key *k, t_dda *dda, t_img *img_data)
+void	sprite_loop(t_key *k, t_dda *dda, t_img *img_data, double *z_buffer)
 {
 	int i;
+
+	i = 0;
+	ft_lst_sort(k->sprite_save->next, k);
+	k->sprite = k->sprite_save->next;
+	while (i < k->sprite_num)
+	{
+		dda->sprite_x = k->sprite->x - k->pos_x;
+		dda->sprite_y = k->sprite->y - k->pos_y;
+		dda->invert = 1.0 / (k->plane_x * k->dir_y - k->dir_x * k->plane_y);
+		dda->transform_x = dda->invert
+		* (k->dir_y * dda->sprite_x - k->dir_x * dda->sprite_y);
+		dda->transform_y = dda->invert * (-1 * k->plane_y
+		* dda->sprite_x + k->plane_x * dda->sprite_y);
+		dda->sprite_screen_x = (int)((k->window_width / 2)
+		* (1 + dda->transform_x / dda->transform_y));
+		dda->sprite_height = abs((int)(k->window_heigth / (dda->transform_y)));
+		dda->sprite_width = abs((int)(k->window_heigth / (dda->transform_y)));
+		img_put_sprite(k, z_buffer, img_data, dda);
+		k->sprite = k->sprite->next;
+		i++;
+	}
+}
+
+void	window_loop(t_key *k, t_dda *dda, t_img *img_data)
+{
+	int		i;
 	double	z_buffer[k->window_width + 1];
 
 	i = 0;
@@ -385,23 +467,7 @@ void	window_loop(t_key *k, t_dda *dda, t_img *img_data)
 		img_create(k, i, img_data, dda);
 		i++;
 	}
-	i = 0;
-	ft_lst_sort(k->sprite_save->next, k);
-	k->sprite = k->sprite_save->next;
-	while (i < k->sprite_num)
-	{
-		dda->sprite_x = k->sprite->x - k->pos_x;
-		dda->sprite_y = k->sprite->y - k->pos_y;
-		dda->invert = 1.0 / (k->plane_x * k->dir_y - k->dir_x * k->plane_y);
-		dda->transform_x = dda->invert * (k->dir_y * dda->sprite_x - k->dir_x * dda->sprite_y);
-		dda->transform_y = dda->invert * (-1 * k->plane_y * dda->sprite_x + k->plane_x * dda->sprite_y);
-		dda->sprite_screen_x = (int)((k->window_width / 2) * (1 + dda->transform_x / dda->transform_y));
-		dda->sprite_height = abs((int)(k->window_heigth / (dda->transform_y)));
-		dda->sprite_width = abs((int)(k->window_heigth / (dda->transform_y)));
-		img_put_sprite(k, z_buffer, img_data ,dda);
-		k->sprite = k->sprite->next;
-		i++;
-	}
+	sprite_loop(k, dda, img_data, z_buffer);
 }
 
 int		loop_hook(t_key *k)

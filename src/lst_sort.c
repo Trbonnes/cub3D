@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/06 11:18:49 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/06 15:14:59 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/06 15:39:40 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int		cmp(t_sprite *current, t_sprite *next, t_key *param)
 {
 	double totcurrent;
 	double totnext;
+
 	totcurrent = powf(current->x - param->pos_x, 2)
 	+ powf(current->y - param->pos_y, 2);
 	totnext = powf(next->x - param->pos_x, 2)
@@ -25,11 +26,12 @@ int		cmp(t_sprite *current, t_sprite *next, t_key *param)
 	else
 		return (0);
 }
+
 void	swap_data(t_sprite *current)
 {
 	double		tmpx;
 	double		tmpy;
-	
+
 	tmpx = current->x;
 	tmpy = current->y;
 	current->x = current->next->x;
@@ -42,7 +44,7 @@ void	ft_lst_sort(t_sprite *begin_list, t_key *param)
 {
 	t_sprite	*count;
 	t_sprite	*current;
-	
+
 	if (!begin_list || !begin_list)
 		return ;
 	count = begin_list;

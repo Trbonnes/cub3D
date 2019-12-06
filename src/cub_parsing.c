@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:20:39 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/06 15:11:59 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/06 15:47:23 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_sprite	*ft_new_sprite(int x, int y)
 	return (new);
 }
 
-char	*ft_map_trim(char *map)
+char		*ft_map_trim(char *map)
 {
 	char	*new_map;
 	int		spaces_count;
@@ -55,7 +55,7 @@ char	*ft_map_trim(char *map)
 	return (new_map);
 }
 
-void	set_position(int i, t_key *param)
+void		set_position(int i, t_key *param)
 {
 	if (i == 0 || i == -1)
 		return ;
@@ -63,7 +63,7 @@ void	set_position(int i, t_key *param)
 	param->pos_y = (double)param->map_heigth - 0.5;
 }
 
-int		finding_position(char *str, t_key *param)
+int			finding_position(char *str, t_key *param)
 {
 	int	i;
 
@@ -87,7 +87,7 @@ int		finding_position(char *str, t_key *param)
 	return (0);
 }
 
-void	resolution(char *line, t_key *param)
+void		resolution(char *line, t_key *param)
 {
 	while (!ft_isdigit(*line))
 		line++;
@@ -97,7 +97,7 @@ void	resolution(char *line, t_key *param)
 	param->window_heigth = ft_atoi(line);
 }
 
-void	north_path(char *line, t_key *param)
+void		north_path(char *line, t_key *param)
 {
 	line += 2;
 	while (*line == ' ')
@@ -105,7 +105,7 @@ void	north_path(char *line, t_key *param)
 	param->north_path = ft_strdup(line);
 }
 
-void	south_path(char *line, t_key *param)
+void		south_path(char *line, t_key *param)
 {
 	line += 2;
 	while (*line == ' ')
@@ -113,7 +113,7 @@ void	south_path(char *line, t_key *param)
 	param->south_path = ft_strdup(line);
 }
 
-void	west_path(char *line, t_key *param)
+void		west_path(char *line, t_key *param)
 {
 	line += 2;
 	while (*line == ' ')
@@ -121,7 +121,7 @@ void	west_path(char *line, t_key *param)
 	param->west_path = ft_strdup(line);
 }
 
-void	east_path(char *line, t_key *param)
+void		east_path(char *line, t_key *param)
 {
 	line += 2;
 	while (*line == ' ')
@@ -129,7 +129,7 @@ void	east_path(char *line, t_key *param)
 	param->east_path = ft_strdup(line);
 }
 
-void	sprite_path(char *line, t_key *param)
+void		sprite_path(char *line, t_key *param)
 {
 	line++;
 	while (*line == ' ')
@@ -137,7 +137,7 @@ void	sprite_path(char *line, t_key *param)
 	param->sprite_path = ft_strdup(line);
 }
 
-void	floor_color(char *line, t_key *param)
+void		floor_color(char *line, t_key *param)
 {
 	int			r;
 	int			g;
@@ -160,7 +160,7 @@ void	floor_color(char *line, t_key *param)
 	param->floor_color = (r << 16 | g << 8 | b);
 }
 
-void	cieling_color(char *line, t_key *param)
+void		cieling_color(char *line, t_key *param)
 {
 	int			r;
 	int			g;
@@ -183,7 +183,7 @@ void	cieling_color(char *line, t_key *param)
 	param->cieling_color = (r << 16 | g << 8 | b);
 }
 
-void	map_realloc(int width, char *line, t_key *param)
+void		map_realloc(int width, char *line, t_key *param)
 {
 	char		*tmp_map;
 
@@ -197,7 +197,35 @@ void	map_realloc(int width, char *line, t_key *param)
 	free(tmp_map);
 }
 
-void	map_parsing(char *line, t_key *param, int fd)
+int			sprite_parsing(t_key *param)
+{
+	int x;
+	int y;
+
+	x = 0;
+	y = 0;
+	param->sprite = ft_new_sprite(0, 0);
+	param->sprite_save = param->sprite;
+	while (y < param->map_heigth)
+	{
+		if (param->worldmap[y * param->map_width + x] == '2')
+		{
+			param->sprite->next = ft_new_sprite(x, y);
+			param->sprite = param->sprite->next;
+			param->sprite_num++;
+		}
+		if (x < param->map_width - 1)
+			x++;
+		else
+		{
+			x = 0;
+			y++;
+		}
+	}
+	return (0);
+}
+
+void		map_parsing(char *line, t_key *param, int fd)
 {
 	char		*save;
 	int			width;
@@ -226,34 +254,7 @@ void	map_parsing(char *line, t_key *param, int fd)
 	}
 }
 
-void	sprite_parsing(t_key *param)
-{
-	int x;
-	int y;
-
-	x = 0;
-	y = 0;
-	param->sprite = ft_new_sprite(0, 0);
-	param->sprite_save = param->sprite;
-	while (y < param->map_heigth)
-	{
-		if (param->worldmap[y * param->map_width + x] == '2')
-		{
-			param->sprite->next = ft_new_sprite(x, y);
-			param->sprite = param->sprite->next;
-			param->sprite_num++;
-		}
-		if (x < param->map_width - 1)
-			x++;
-		else
-		{
-			x = 0;
-			y++;
-		}
-	}
-}
-
-int		parsing_init(int fd, t_key *param)
+int			parsing_init(int fd, t_key *param)
 {
 	char		*line;
 
@@ -278,8 +279,6 @@ int		parsing_init(int fd, t_key *param)
 		free(line);
 	}
 	map_parsing(line, param, fd);
-	sprite_parsing(param);
-	printf("parsing over\n");
 	close(fd);
-	return (0);
+	return (sprite_parsing(param));
 }

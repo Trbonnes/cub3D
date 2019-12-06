@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:16:51 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/06 10:47:10 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/06 17:30:05 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 
 int		main(int ac, char **av)
 {
+	int fd;
 	t_key	param;
 
 	if (ac == 2 || (ac == 3 && !ft_strncmp(av[2], "-save", 5)))
 	{
-		int fd;
-
 		param = (t_key) { 0 };
 		param.angle = -(M_PI / 2);
 		if ((fd = open(av[1], O_RDONLY)) == -1)
