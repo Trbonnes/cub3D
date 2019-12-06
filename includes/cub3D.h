@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/05 13:43:44 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/06 11:46:37 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,13 @@ typedef struct		s_img
 	int				height;
 	int				width;
 }					t_img;
+
+typedef	struct		s_sprite
+{
+	double			x;
+	double			y;
+	struct s_sprite	*next;
+}					t_sprite;
 
 typedef	struct		s_key
 {
@@ -66,6 +73,9 @@ typedef	struct		s_key
 	t_img			texture_ea;
 	t_img			texture_we;
 	t_img			texture_sprite;
+	t_sprite		*sprite;
+	t_sprite		*sprite_save;
+	int				sprite_num;
 }					t_key;
 
 typedef struct		s_dda
@@ -88,12 +98,14 @@ typedef struct		s_dda
 	double			wall_y;
 	long			texture_x;
 	long			texture_y;
-	int				sprite;
-	double			sprite_distance;
-	double			sprite_height;
-	long			sprite_x;
-	long			sprite_y;
-
+	double			sprite_x;
+	double			sprite_y;
+	double			invert;
+	double			transform_x;
+	double			transform_y;
+	int				sprite_screen_x;
+	int				sprite_height;
+	int				sprite_width;
 }					t_dda;
 
 int					window_quit(t_key *k);
@@ -108,5 +120,7 @@ char				*ft_strdup(const char *s);
 char				*ft_strjoin(char const *s1, char const *s2);
 size_t				ft_strlen(const char *s);
 int					ft_isalpha(int c);
+t_sprite			*ft_new_sprite(int x, int y);
+void				ft_lst_sort(t_sprite *begin_list, t_key *param);
 
 #endif
