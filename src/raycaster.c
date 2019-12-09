@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/06 17:27:23 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 09:11:59 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -484,6 +484,9 @@ int		loop_hook(t_key *k)
 	img_data.img_data = (int *)mlx_get_data_addr(k->img_ptr,
 	&img_data.bits_per_pixel, &img_data.size_line, &img_data.endian);
 	window_loop(k, &dda, &img_data);
-	mlx_put_image_to_window(k->mlx_ptr, k->win_ptr, k->img_ptr, 0, 0);
+	if (!k->save_bool)
+		mlx_put_image_to_window(k->mlx_ptr, k->win_ptr, k->img_ptr, 0, 0);
+	else
+		k->dda_img_data = img_data.img_data;
 	return (0);
 }

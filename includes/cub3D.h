@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/06 16:29:03 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 09:11:10 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,13 @@
 # include <unistd.h>
 # include <fcntl.h>
 # define ROT .1
+
+typedef struct		s_saver
+{
+	unsigned char	*buf;
+	size_t			index;
+	size_t			size;
+}					t_saver;
 
 typedef struct		s_img
 {
@@ -55,6 +62,8 @@ typedef	struct		s_sprite
 
 typedef	struct		s_key
 {
+	int				save_bool;
+	int				*dda_img_data;
 	int				window_width;
 	int				window_heigth;
 	int				map_width;
@@ -133,5 +142,6 @@ size_t				ft_strlen(const char *s);
 int					ft_isalpha(int c);
 t_sprite			*ft_new_sprite(int x, int y);
 void				ft_lst_sort(t_sprite *begin_list, t_key *param);
+int					save_first_frame(t_key *s, char *filename);
 
 #endif
