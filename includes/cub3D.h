@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 10:45:22 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 12:24:29 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,5 +146,18 @@ int					ft_isalpha(int c);
 t_sprite			*ft_new_sprite(int x, int y);
 void				ft_lst_sort(t_sprite *begin_list, t_key *param);
 int					save_first_frame(t_key *s, char *filename);
+void				resolution(char *line, t_key *param);
+void				north_path(char *line, t_key *param);
+void				south_path(char *line, t_key *param);
+void				west_path(char *line, t_key *param);
+void				east_path(char *line, t_key *param);
+void				sprite_path(char *line, t_key *param);
+void				floor_color(char *line, t_key *param);
+void				cieling_color(char *line, t_key *param);
+void				map_parsing(char *line, t_key *param, int fd);
+int					sprite_parsing(t_key *param);
+void				parsing_error(t_key *param);
+void				set_position(int i, t_key *param);
+int					finding_position(char *str, t_key *param);
 
 #endif
