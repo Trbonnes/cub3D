@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 13:17:15 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 14:48:17 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,19 @@
 # include <unistd.h>
 # include <fcntl.h>
 # define ROT .1
+
+typedef union		u_color
+{
+	unsigned int	v;
+
+	struct			s_color
+	{
+		unsigned int	b : 8;
+		unsigned int	g : 8;
+		unsigned int	r : 8;
+		unsigned int	a : 8;
+	}				color;
+}					t_color;
 
 typedef struct		s_saver
 {
@@ -163,7 +176,7 @@ void				deal_forward(t_key *k);
 void				deal_backward(t_key *k);
 void				deal_left(t_key *k);
 void				deal_right(t_key *k);
-void				ceiling_loop(t_key *k, t_img *img_data, int *pixel_index);
+void				ceiling_loop(t_key *k, t_img *img_data, int *pixel_index, int pixel_number);
 void				floor_loop(t_key *k, t_img *img_data,
 int *pixel_index, int pixel_number);
 void				wall_calculate(t_key *k, t_dda *dda);
