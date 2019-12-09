@@ -6,15 +6,18 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 09:11:10 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 10:45:22 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
+# define KEYPRESSMASK	1
+# define STRUCTURENOTIFYMASK	131072
+# define KEYPRESS	2
+# define DESTROYNOTIFY	17
 
 # include "mlx.h"
-# include "X.h"
 # include "get_next_line.h"
 # include <math.h>
 # include <stdio.h>
@@ -50,7 +53,7 @@ typedef	struct		s_sprite_put
 	int		end_x;
 	int		y;
 	int		d;
-	int 	stripe;
+	int		stripe;
 }					t_sprite_put;
 
 typedef	struct		s_sprite

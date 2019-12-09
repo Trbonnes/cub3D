@@ -6,11 +6,39 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:20:39 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 08:12:27 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 11:48:11 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+void		parsing_error(t_key *param)
+{
+	int error_bool;
+
+	error_bool = 0;
+	if (param->window_width == 0 || param->window_heigth == 0)
+		error_bool = 1;
+	else if (param->north_path == 0)
+		error_bool = 1;
+	else if (param->south_path == 0)
+		error_bool = 1;
+	else if (param->east_path == 0)
+		error_bool = 1;
+	else if (param->west_path == 0)
+		error_bool = 1;
+	else if (param->sprite_path == 0)
+		error_bool = 1;
+	else if (param->floor_color < 0)
+		error_bool = 1;
+	else if (param->cieling_color < 0)
+		error_bool = 1;
+	if (error_bool)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 37);
+		exit(0);
+	}
+}
 
 t_sprite	*ft_new_sprite(int x, int y)
 {
@@ -89,16 +117,34 @@ int			finding_position(char *str, t_key *param)
 
 void		resolution(char *line, t_key *param)
 {
+	if (param->window_heigth != 0 || param->window_width != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	while (!ft_isdigit(*line))
 		line++;
-	param->window_width = ft_atoi(line);
+	if ((param->window_width = ft_atoi(line)) > 2560)
+		param->window_width = 2560;
+	else if (param->window_width < 50)
+		param->window_width = 50;
 	while (ft_isdigit(*line))
 		line++;
-	param->window_heigth = ft_atoi(line);
+	if ((param->window_heigth = ft_atoi(line)) > 1440)
+		param->window_heigth = 1440;
+	else if (param->window_heigth < 50)
+		param->window_heigth = 50;
 }
 
 void		north_path(char *line, t_key *param)
 {
+	if (param->north_path != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	line += 2;
 	while (*line == ' ')
 		line++;
@@ -107,6 +153,12 @@ void		north_path(char *line, t_key *param)
 
 void		south_path(char *line, t_key *param)
 {
+	if (param->south_path != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	line += 2;
 	while (*line == ' ')
 		line++;
@@ -115,6 +167,12 @@ void		south_path(char *line, t_key *param)
 
 void		west_path(char *line, t_key *param)
 {
+	if (param->west_path != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	line += 2;
 	while (*line == ' ')
 		line++;
@@ -123,6 +181,12 @@ void		west_path(char *line, t_key *param)
 
 void		east_path(char *line, t_key *param)
 {
+	if (param->east_path != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	line += 2;
 	while (*line == ' ')
 		line++;
@@ -131,6 +195,12 @@ void		east_path(char *line, t_key *param)
 
 void		sprite_path(char *line, t_key *param)
 {
+	if (param->sprite_path != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	line++;
 	while (*line == ' ')
 		line++;
@@ -143,6 +213,12 @@ void		floor_color(char *line, t_key *param)
 	int			g;
 	int			b;
 
+	if (param->floor_color != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	line++;
 	while (!ft_isdigit(*line))
 		line++;
@@ -166,6 +242,12 @@ void		cieling_color(char *line, t_key *param)
 	int			g;
 	int			b;
 
+	if (param->cieling_color != 0)
+	{
+		write(2, "Error\nFile not well formated\nExiting\n", 36);
+		free(line);
+		exit(0);
+	}
 	line++;
 	while (!ft_isdigit(*line))
 		line++;
@@ -222,6 +304,7 @@ int			sprite_parsing(t_key *param)
 			y++;
 		}
 	}
+	parsing_error(param);
 	return (0);
 }
 

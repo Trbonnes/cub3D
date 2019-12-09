@@ -3,7 +3,7 @@ R 720 480
 NO ./texture/2d7b4e081819e28d7ae12510e648bb5f.xpm
 SO ./texture/8ca11b7280a31bb0ade4da6ebcda9637.xpm
 WE ./texture/star-wars-stars-12-x-12-paper-74.xpm
-EA         ./texture/images_1.xpm
+EA ./texture/images_1.xpm
 
 S ./texture/darth_maul.xpm
 F 255,100,100

@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:16:51 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 10:31:45 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 10:53:58 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,19 @@ void	value_init(t_key *param)
 int		init_error(int ac, char **av)
 {
 	int fd;
+	int	i;
 
+	i = 0;
+	while (av[1][i])
+		i++;
+	if (av[1][--i] != 'b')
+		return (-1);
+	if (av[1][--i] != 'u')
+		return (-1);
+	if (av[1][--i] != 'c')
+		return (-1);
+	if (av[1][--i] != '.')
+		return (-1);
 	fd = open(av[1], O_RDONLY);
 	if ((ac == 2 || (ac == 3 && !ft_strncmp(av[2], "-save", 5))) && fd != -1)
 		return (fd);
@@ -81,9 +93,9 @@ int		main(int ac, char **av)
 		param.win_ptr = mlx_new_window(param.mlx_ptr,
 		param.window_width, param.window_heigth, "cub3D");
 		mlx_loop_hook(param.mlx_ptr, &loop_hook, &param);
-		mlx_hook(param.win_ptr, KeyPress, KeyPressMask, deal_key, &param);
-		mlx_hook(param.win_ptr, DestroyNotify,
-		StructureNotifyMask, window_quit, &param);
+		mlx_hook(param.win_ptr, KEYPRESS, KEYPRESSMASK, deal_key, &param);
+		mlx_hook(param.win_ptr, DESTROYNOTIFY,
+		STRUCTURENOTIFYMASK, window_quit, &param);
 		mlx_loop(param.mlx_ptr);
 	}
 	else
