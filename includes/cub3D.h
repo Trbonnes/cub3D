@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 12:24:29 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 13:17:15 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,5 +159,18 @@ int					sprite_parsing(t_key *param);
 void				parsing_error(t_key *param);
 void				set_position(int i, t_key *param);
 int					finding_position(char *str, t_key *param);
+void				deal_forward(t_key *k);
+void				deal_backward(t_key *k);
+void				deal_left(t_key *k);
+void				deal_right(t_key *k);
+void				ceiling_loop(t_key *k, t_img *img_data, int *pixel_index);
+void				floor_loop(t_key *k, t_img *img_data,
+int *pixel_index, int pixel_number);
+void				wall_calculate(t_key *k, t_dda *dda);
+void				img_create(t_key *k, int i, t_img *img_data, t_dda *dda);
+void				sprite_loop(t_key *k, t_dda *dda, t_img *img_data,
+double *z_buffer);
+void				wall_side_ew(t_key *k, t_dda *dda);
+void				wall_side_ns(t_key *k, t_dda *dda);
 
 #endif

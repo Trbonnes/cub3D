@@ -6,25 +6,11 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 12:33:51 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/09 13:12:09 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
-
-void	ceiling_loop(t_key *k, t_img *img_data, int *pixel_index)
-{
-	img_data->img_data[pixel_index[0]] = k->cieling_color;
-	pixel_index[0] += k->window_width;
-}
-
-void	floor_loop(t_key *k, t_img *img_data,
-int *pixel_index, int pixel_number)
-{
-	img_data->img_data[pixel_index[0]] = k->floor_color;
-	if (pixel_number < (int)k->window_heigth - 1)
-		pixel_index[0] += k->window_width;
-}
 
 void	ray_init(t_key *k, t_dda *dda)
 {
@@ -61,67 +47,6 @@ void	dda_init(t_key *k, t_dda *dda, int i)
 	dda->decalage_ray_y = fabs(1 / dda->ray_dir_y);
 	dda->wall = 0;
 	ray_init(k, dda);
-}
-
-void	wall_side_ew(t_key *k, t_dda *dda)
-{
-	dda->wall_distance = (dda->map_x - k->pos_x
-	+ (1 - dda->step_x) / 2) / dda->ray_dir_x;
-	dda->wall_x = k->pos_y + dda->wall_distance * dda->ray_dir_y;
-	dda->wall_x -= (long)dda->wall_x;
-}
-
-void	wall_side_ns(t_key *k, t_dda *dda)
-{
-	dda->wall_distance = (dda->map_y - k->pos_y
-	+ (1 - dda->step_y) / 2) / dda->ray_dir_y;
-	dda->wall_x = k->pos_x + dda->wall_distance * dda->ray_dir_x;
-	dda->wall_x -= (long)dda->wall_x;
-}
-
-void	wall_texture_s(t_key *k, t_dda *dda)
-{
-	dda->texture_x = (long)(dda->wall_x * (double)k->texture_so.width);
-	if (dda->ray_dir_y > 0)
-		dda->texture_x = k->texture_so.width - dda->texture_x - 1;
-}
-
-void	wall_texture_n(t_key *k, t_dda *dda)
-{
-	dda->texture_x = (long)(dda->wall_x * (double)k->texture_no.width);
-	if (dda->ray_dir_y > 0)
-		dda->texture_x = k->texture_no.width - dda->texture_x - 1;
-}
-
-void	wall_texture_e(t_key *k, t_dda *dda)
-{
-	dda->texture_x = (long)(dda->wall_x * (double)k->texture_ea.width);
-	if (dda->ray_dir_x < 0)
-		dda->texture_x = k->texture_ea.width - dda->texture_x - 1;
-}
-
-void	wall_texture_w(t_key *k, t_dda *dda)
-{
-	dda->texture_x = (long)(dda->wall_x * (double)k->texture_we.width);
-	if (dda->ray_dir_x < 0)
-		dda->texture_x = k->texture_we.width - dda->texture_x - 1;
-}
-
-void	wall_calculate(t_key *k, t_dda *dda)
-{
-	if (dda->wall_side == 'E' || dda->wall_side == 'W')
-		wall_side_ew(k, dda);
-	else
-		wall_side_ns(k, dda);
-	dda->wall_height = k->window_heigth / dda->wall_distance;
-	if (dda->wall_side == 'S')
-		wall_texture_s(k, dda);
-	else if (dda->wall_side == 'N')
-		wall_texture_n(k, dda);
-	else if (dda->wall_side == 'E')
-		wall_texture_e(k, dda);
-	else
-		wall_texture_w(k, dda);
 }
 
 void	wall_loop(t_key *k, t_dda *dda)
