@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:16:51 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 12:25:17 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 14:57:58 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,14 @@ void	texture_init(t_key *param)
 	&param->texture_sprite.width, &param->texture_sprite.height),
 	&param->texture_sprite.bits_per_pixel, &param->texture_sprite.size_line,
 	&param->texture_sprite.endian);
+	param->texture_saber.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
+	param->mlx_ptr, "./texture/saber.xpm", &param->texture_saber.width,
+	&param->texture_saber.height), &param->texture_saber.bits_per_pixel,
+	&param->texture_saber.size_line, &param->texture_saber.endian);
+	param->texture_saber_a.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
+	param->mlx_ptr, "./texture/horizontal_saber.xpm", &param->texture_saber_a.width,
+	&param->texture_saber_a.height), &param->texture_saber_a.bits_per_pixel,
+	&param->texture_saber_a.size_line, &param->texture_saber_a.endian);
 }
 
 void	value_init(t_key *param)
@@ -61,6 +69,8 @@ int		init_error(int ac, char **av)
 	i = 0;
 	while (av[1][i])
 		i++;
+	if (i < 4)
+		return (-1);
 	if (av[1][--i] != 'b')
 		return (-1);
 	if (av[1][--i] != 'u')

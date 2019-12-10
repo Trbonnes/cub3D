@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 14:48:17 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 15:19:54 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ typedef	struct		s_key
 	t_img			texture_sprite;
 	t_sprite		*sprite;
 	t_sprite		*sprite_save;
+	t_img			texture_saber;
+	t_img			texture_saber_a;
 	int				sprite_num;
 }					t_key;
 
@@ -185,5 +187,9 @@ void				sprite_loop(t_key *k, t_dda *dda, t_img *img_data,
 double *z_buffer);
 void				wall_side_ew(t_key *k, t_dda *dda);
 void				wall_side_ns(t_key *k, t_dda *dda);
+void				add_saber(t_key *k, t_dda *dda, t_img *img_data);
+void				add_saber_attack(t_key *k, t_dda *dda, t_img *img_data);
+int					hook_attack(t_key *k);
+void				ft_lstdelone(t_sprite *current, t_sprite *previous, t_key *k);
 
 #endif

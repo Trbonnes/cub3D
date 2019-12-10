@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:31:47 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 15:23:06 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 15:28:13 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_img *img_data, t_dda *dda)
 		dda->texture_y = (put->d * k->texture_sprite.height
 		/ dda->sprite_height) / 256;
 		if (k->texture_sprite.img_data[dda->texture_y
-		* k->texture_sprite.width + dda->texture_x] != 0)
+		* k->texture_sprite.width + dda->texture_x] > 0x101010)
 			img_data->img_data[put->y * k->window_width + put->stripe] =
 			k->texture_sprite.img_data[dda->texture_y
 			* k->texture_sprite.width + dda->texture_x];
@@ -72,23 +72,26 @@ void	sprite_loop(t_key *k, t_dda *dda, t_img *img_data, double *z_buffer)
 	int i;
 
 	i = 0;
-	ft_lst_sort(k->sprite_save->next, k);
-	k->sprite = k->sprite_save->next;
-	while (i < k->sprite_num)
+	if (k->sprite_save && k->sprite_save->next)
 	{
-		dda->sprite_x = k->sprite->x - k->pos_x;
-		dda->sprite_y = k->sprite->y - k->pos_y;
-		dda->invert = 1.0 / (k->plane_x * k->dir_y - k->dir_x * k->plane_y);
-		dda->transform_x = dda->invert
-		* (k->dir_y * dda->sprite_x - k->dir_x * dda->sprite_y);
-		dda->transform_y = dda->invert * (-1 * k->plane_y
-		* dda->sprite_x + k->plane_x * dda->sprite_y);
-		dda->sprite_screen_x = (int)((k->window_width / 2)
-		* (1 + dda->transform_x / dda->transform_y));
-		dda->sprite_height = abs((int)(k->window_heigth / (dda->transform_y)));
-		dda->sprite_width = abs((int)(k->window_heigth / (dda->transform_y)));
-		img_put_sprite(k, z_buffer, img_data, dda);
-		k->sprite = k->sprite->next;
-		i++;
+		ft_lst_sort(k->sprite_save->next, k);
+		k->sprite = k->sprite_save->next;
+		while (i < k->sprite_num)
+		{
+			dda->sprite_x = k->sprite->x - k->pos_x;
+			dda->sprite_y = k->sprite->y - k->pos_y;
+			dda->invert = 1.0 / (k->plane_x * k->dir_y - k->dir_x * k->plane_y);
+			dda->transform_x = dda->invert
+			* (k->dir_y * dda->sprite_x - k->dir_x * dda->sprite_y);
+			dda->transform_y = dda->invert * (-1 * k->plane_y
+			* dda->sprite_x + k->plane_x * dda->sprite_y);
+			dda->sprite_screen_x = (int)((k->window_width / 2)
+			* (1 + dda->transform_x / dda->transform_y));
+			dda->sprite_height = abs((int)(k->window_heigth / (dda->transform_y)));
+			dda->sprite_width = abs((int)(k->window_heigth / (dda->transform_y)));
+			img_put_sprite(k, z_buffer, img_data, dda);
+			k->sprite = k->sprite->next;
+			i++;
+		}
 	}
 }
