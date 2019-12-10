@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:31:16 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 18:02:56 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 18:06:11 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ int		window_quit(t_key *k)
 
 int		deal_key(int key, t_key *k)
 {
-	if (k->player.hp <= 0)
-		return (0);
 	if (key == 53)
 		window_quit(k);
+	if (k->player.hp <= 0)
+		return (0);
 	if (key == 13)
 		deal_forward(k);
 	if (key == 1)
