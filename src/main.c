@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:16:51 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 14:57:58 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 17:59:26 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,10 @@ void	texture_init(t_key *param)
 	param->mlx_ptr, "./texture/horizontal_saber.xpm", &param->texture_saber_a.width,
 	&param->texture_saber_a.height), &param->texture_saber_a.bits_per_pixel,
 	&param->texture_saber_a.size_line, &param->texture_saber_a.endian);
+	param->game_over.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
+	param->mlx_ptr, "./texture/game_over.xpm", &param->game_over.width,
+	&param->game_over.height), &param->game_over.bits_per_pixel,
+	&param->game_over.size_line, &param->game_over.endian);
 }
 
 void	value_init(t_key *param)
@@ -95,6 +99,7 @@ int		main(int ac, char **av)
 	{
 		param = (t_key) { 0 };
 		param.angle = -(M_PI / 2);
+		param.player = (t_player) {.hp = 50000, .protected = 0};
 		parsing_init(fd, &param);
 		value_init(&param);
 		texture_init(&param);
@@ -106,6 +111,7 @@ int		main(int ac, char **av)
 		mlx_hook(param.win_ptr, KEYPRESS, KEYPRESSMASK, deal_key, &param);
 		mlx_hook(param.win_ptr, DESTROYNOTIFY,
 		STRUCTURENOTIFYMASK, window_quit, &param);
+		mlx_hook(param.win_ptr, KEYRELEASE, KEYRELEASEMASK, release_key, &param);
 		mlx_loop(param.mlx_ptr);
 	}
 	else

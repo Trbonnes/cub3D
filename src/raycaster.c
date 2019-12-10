@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 14:58:47 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 17:58:10 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,15 @@ int		loop_hook(t_key *k)
 
 	img_data = (t_img) { 0 };
 	dda = (t_dda) { 0 };
-	img_data = (t_img) { 0 };
 	if (k->img_ptr)
 		mlx_destroy_image(k->mlx_ptr, k->img_ptr);
 	k->img_ptr = mlx_new_image(k->mlx_ptr, k->window_width, k->window_heigth);
 	img_data.img_data = (int *)mlx_get_data_addr(k->img_ptr,
 	&img_data.bits_per_pixel, &img_data.size_line, &img_data.endian);
-	window_loop(k, &dda, &img_data);
+	if (k->player.hp <= 0)
+		game_over(k, &img_data);
+	else
+		window_loop(k, &dda, &img_data);
 	if (!k->save_bool)
 		mlx_put_image_to_window(k->mlx_ptr, k->win_ptr, k->img_ptr, 0, 0);
 	else

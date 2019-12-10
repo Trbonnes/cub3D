@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:31:16 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 16:08:04 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 18:02:56 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	deal_attack(t_key *k)
 	delete = k->sprite_save;
 	previous = NULL;
 	hook_attack(k);
+	k->player.protected = 1;
 	i = 0;
 	j = 0;
 	count = 0;
@@ -68,6 +69,8 @@ int		window_quit(t_key *k)
 
 int		deal_key(int key, t_key *k)
 {
+	if (k->player.hp <= 0)
+		return (0);
 	if (key == 53)
 		window_quit(k);
 	if (key == 13)
@@ -88,5 +91,15 @@ int		deal_key(int key, t_key *k)
 	k->dir_y = sin(k->angle);
 	k->plane_x = -1 * k->dir_y;
 	k->plane_y = k->dir_x;
+	return (0);
+}
+
+
+int		release_key(int key, t_key *k)
+{
+	if (k->player.hp <= 0)
+		return (0);
+	if (key == 14)
+		k->player.protected = 0;
 	return (0);
 }

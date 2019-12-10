@@ -6,15 +6,17 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 15:19:54 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 17:53:48 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 # define KEYPRESSMASK	1
+# define KEYRELEASEMASK 9
 # define STRUCTURENOTIFYMASK	131072
 # define KEYPRESS	2
+# define KEYRELEASE	3
 # define DESTROYNOTIFY	17
 
 # include "mlx.h"
@@ -27,6 +29,13 @@
 # include <unistd.h>
 # include <fcntl.h>
 # define ROT .1
+
+typedef	struct		s_player
+{
+	int				hp;
+	int				protected;
+}					t_player;
+
 
 typedef union		u_color
 {
@@ -113,7 +122,9 @@ typedef	struct		s_key
 	t_sprite		*sprite_save;
 	t_img			texture_saber;
 	t_img			texture_saber_a;
+	t_img			game_over;
 	int				sprite_num;
+	t_player		player;
 }					t_key;
 
 typedef struct		s_dda
@@ -148,6 +159,7 @@ typedef struct		s_dda
 
 int					window_quit(t_key *k);
 int					deal_key(int key, t_key *k);
+int					release_key(int key, t_key *k);
 int					loop_hook(t_key *k);
 int					parsing_init(int fd, t_key *param);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
@@ -191,5 +203,7 @@ void				add_saber(t_key *k, t_dda *dda, t_img *img_data);
 void				add_saber_attack(t_key *k, t_dda *dda, t_img *img_data);
 int					hook_attack(t_key *k);
 void				ft_lstdelone(t_sprite *current, t_sprite *previous, t_key *k);
+void				took_damage(t_key *k);
+void				game_over(t_key *k, t_img *img_data);
 
 #endif

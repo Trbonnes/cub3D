@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:31:47 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 15:28:13 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/10 17:26:51 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	put_sprite_loop(t_key *k, t_sprite_put *put,
 t_img *img_data, t_dda *dda)
 {
 	put->y = put->start_y;
+	took_damage(k);
 	while (put->y < put->end_y)
 	{
 		put->d = put->y * 256 - k->window_heigth
