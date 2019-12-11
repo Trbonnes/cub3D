@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:16:51 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 17:59:26 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/11 15:03:44 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,10 @@ void	texture_init(t_key *param)
 	param->mlx_ptr, "./texture/game_over.xpm", &param->game_over.width,
 	&param->game_over.height), &param->game_over.bits_per_pixel,
 	&param->game_over.size_line, &param->game_over.endian);
+	param->health_bar.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
+	param->mlx_ptr, "./texture/health_bar.xpm", &param->health_bar.width,
+	&param->health_bar.height), &param->health_bar.bits_per_pixel,
+	&param->health_bar.size_line, &param->health_bar.endian);
 }
 
 void	value_init(t_key *param)
@@ -99,7 +103,7 @@ int		main(int ac, char **av)
 	{
 		param = (t_key) { 0 };
 		param.angle = -(M_PI / 2);
-		param.player = (t_player) {.hp = 50000, .protected = 0};
+		param.player = (t_player) {.hp = 50000, .protected = 0, .shot = 0};
 		parsing_init(fd, &param);
 		value_init(&param);
 		texture_init(&param);

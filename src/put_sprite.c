@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:31:47 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 17:26:51 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/11 15:16:21 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ t_img *img_data, t_dda *dda)
 			img_data->img_data[put->y * k->window_width + put->stripe] =
 			k->texture_sprite.img_data[dda->texture_y
 			* k->texture_sprite.width + dda->texture_x];
+		if (k->player.shot == 0 && dda->texture_y <= ((k->texture_sprite.height / 2) + 52) && dda->texture_y >= ((k->texture_sprite.height / 2)))
+			img_data->img_data[put->y * k->window_width + put->stripe] = img_data->img_data[put->y * k->window_width + put->stripe] + 0x5f0000;
 		put->y++;
 	}
 }
@@ -73,6 +75,10 @@ void	sprite_loop(t_key *k, t_dda *dda, t_img *img_data, double *z_buffer)
 	int i;
 
 	i = 0;
+	if (k->player.shot == 1)
+		k->player.shot = 0;
+	else
+		k->player.shot = 1; 
 	if (k->sprite_save && k->sprite_save->next)
 	{
 		ft_lst_sort(k->sprite_save->next, k);

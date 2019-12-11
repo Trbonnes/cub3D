@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 17:53:48 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/11 15:03:29 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef	struct		s_player
 {
 	int				hp;
 	int				protected;
+	int				shot;
 }					t_player;
 
 
@@ -123,6 +124,7 @@ typedef	struct		s_key
 	t_img			texture_saber;
 	t_img			texture_saber_a;
 	t_img			game_over;
+	t_img			health_bar;
 	int				sprite_num;
 	t_player		player;
 }					t_key;
@@ -201,6 +203,7 @@ void				wall_side_ew(t_key *k, t_dda *dda);
 void				wall_side_ns(t_key *k, t_dda *dda);
 void				add_saber(t_key *k, t_dda *dda, t_img *img_data);
 void				add_saber_attack(t_key *k, t_dda *dda, t_img *img_data);
+void				add_health_bar(t_key *k, t_dda *dda, t_img *img_data);
 int					hook_attack(t_key *k);
 void				ft_lstdelone(t_sprite *current, t_sprite *previous, t_key *k);
 void				took_damage(t_key *k);

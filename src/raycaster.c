@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 17:58:10 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/11 15:19:41 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ void	window_loop(t_key *k, t_dda *dda, t_img *img_data)
 	}
 	sprite_loop(k, dda, img_data, z_buffer);
 	add_saber(k, dda, img_data);
+	add_health_bar(k, dda, img_data);
 }
 
 int		loop_hook(t_key *k)
@@ -135,6 +136,11 @@ void	window_loop_attack(t_key *k, t_dda *dda, t_img *img_data)
 	}
 	sprite_loop(k, dda, img_data, z_buffer);
 	add_saber_attack(k, dda, img_data);
+	if (k->player.protected == 1 && k->player.hp < 50000)
+		k->player.hp += 200;
+	if (k->player.hp > 50000)
+		k->player.hp = 50000;
+	add_health_bar(k, dda, img_data);
 }
 
 int		hook_attack(t_key *k)

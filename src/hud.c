@@ -6,11 +6,41 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 13:41:25 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/10 15:02:59 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/11 14:58:54 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+void	add_health_bar(t_key *k, t_dda *dda, t_img *img_data)
+{
+	t_sprite_put put;
+	int x;
+
+	put.start_x = 5;
+	put.end_x = put.start_x + ((k->health_bar.width * k->player.hp) / 50000);
+	if (put.end_x > k->health_bar.width + put.start_x)
+		put.end_x = k->health_bar.width + put.start_x;
+	put.start_y = 5;
+	put.end_y = k->health_bar.height;
+	x = put.start_x;
+	dda->texture_x = 0;
+	while (x < put.end_x)
+	{
+		put.y = put.start_y;
+		dda->texture_y = 0;
+		while (put.y < put.end_y && put.y < k->window_heigth)
+		{
+			img_data->img_data[put.y * k->window_width + x] =
+			k->health_bar.img_data[dda->texture_y
+			* k->health_bar.width + dda->texture_x];
+			put.y++;
+			dda->texture_y++;
+		}
+		x++;
+		dda->texture_x++;
+	}
+}
 
 void	add_saber(t_key *k, t_dda *dda, t_img *img_data)
 {
