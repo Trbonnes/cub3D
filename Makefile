@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address -I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL -framework Appkit
+CFLAGS = -Wall -Wextra -Werror -I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL -framework Appkit
 
 SRCS = src/*.c
 OBJS = ${SRCS:.c=.o}

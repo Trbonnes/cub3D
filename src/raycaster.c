@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 14:17:40 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/12 10:27:19 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 11:22:55 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ int		loop_hook(t_key *k)
 	t_dda	dda;
 	t_img	img_data;
 
+	if (k->player.protected == 1)
+		return (0);
 	img_data = (t_img) { 0 };
 	dda = (t_dda) { 0 };
 	if (k->img_ptr)

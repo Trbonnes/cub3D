@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:17:27 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/12 10:56:35 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 11:25:22 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,8 @@ void		map_parsing(char *line, t_key *param, int fd)
 	int			i;
 
 	param->map_heigth = 0;
-	while (line[0] != '\0')
+	while (line[0] != '\0' && ++param->map_heigth)
 	{
-		param->map_heigth++;
 		save = ft_map_trim(line);
 		free(line);
 		line = ft_strdup(save);
@@ -81,4 +80,5 @@ void		map_parsing(char *line, t_key *param, int fd)
 		free(line);
 		get_next_line(fd, &line);
 	}
+	free(line);
 }
