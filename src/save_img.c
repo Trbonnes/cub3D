@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 10:33:51 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 10:36:33 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 11:43:07 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int				save_first_frame(t_key *s, char *filename)
 	sv.size = 54 + 3 * s->window_width * s->window_heigth +
 		((4 - (s->window_width * 3) % 4) % 4) * s->window_heigth;
 	sv.buf = malloc(sv.size);
-	if ((fd = open(filename, O_WRONLY | O_CREAT)) < 0)
+	if ((fd = open(filename, O_WRONLY | O_CREAT, S_IRUSR)) < 0)
 		return (-1);
 	write_file_header(&sv);
 	write_file_info(s, &sv);
