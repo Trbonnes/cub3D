@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:20:39 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/09 12:19:00 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 10:58:42 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,5 +98,5 @@ int			parsing_init(int fd, t_key *param)
 	}
 	map_parsing(line, param, fd);
 	close(fd);
-	return (sprite_parsing(param));
+	return (sprite_parsing(map_border_check(param)));
 }
