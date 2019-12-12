@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/12 11:53:50 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 14:28:29 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,5 +214,11 @@ int					init_error(int ac, char **av);
 void				shot_check(t_key *k);
 void				map_error(t_key *param);
 t_key				*map_border_check(t_key *param);
+void				texture_init_north(t_key *param);
+void				texture_init_south(t_key *param);
+void				texture_init_east(t_key *param);
+void				texture_init_west(t_key *param);
+void				texture_init_sprite(t_key *param);
+void				texture_error(void);
 
 #endif

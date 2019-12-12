@@ -6,11 +6,17 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 10:18:00 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/12 10:18:22 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 14:27:31 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+void	texture_error(void)
+{
+	write(2, "Error\nInexistant texture\nExiting\n", 33);
+	exit(0);
+}
 
 void	texture_add_init(t_key *param)
 {
@@ -38,27 +44,11 @@ void	texture_add_init(t_key *param)
 
 void	texture_init(t_key *param)
 {
-	param->texture_no.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
-	param->mlx_ptr, param->north_path, &param->texture_no.width,
-	&param->texture_no.height), &param->texture_no.bits_per_pixel,
-	&param->texture_no.size_line, &param->texture_no.endian);
-	param->texture_so.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
-	param->mlx_ptr, param->south_path, &param->texture_so.width,
-	&param->texture_so.height), &param->texture_so.bits_per_pixel,
-	&param->texture_so.size_line, &param->texture_so.endian);
-	param->texture_ea.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
-	param->mlx_ptr, param->east_path, &param->texture_ea.width,
-	&param->texture_ea.height), &param->texture_ea.bits_per_pixel,
-	&param->texture_ea.size_line, &param->texture_ea.endian);
-	param->texture_we.img_data = (int *)mlx_get_data_addr(mlx_xpm_file_to_image(
-	param->mlx_ptr, param->west_path, &param->texture_we.width,
-	&param->texture_we.height), &param->texture_we.bits_per_pixel,
-	&param->texture_we.size_line, &param->texture_we.endian);
-	param->texture_sprite.img_data = (int *)mlx_get_data_addr(
-	mlx_xpm_file_to_image(param->mlx_ptr, param->sprite_path,
-	&param->texture_sprite.width, &param->texture_sprite.height),
-	&param->texture_sprite.bits_per_pixel, &param->texture_sprite.size_line,
-	&param->texture_sprite.endian);
+	texture_init_north(param);
+	texture_init_south(param);
+	texture_init_east(param);
+	texture_init_west(param);
+	texture_init_sprite(param);
 	texture_add_init(param);
 }
 
