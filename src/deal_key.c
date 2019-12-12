@@ -6,57 +6,43 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:31:16 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/11 14:29:05 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 10:17:04 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-void	deal_attack(t_key *k)
+char	check_attack(t_key *k, double *i, double *j)
 {
-	double		i;
-	double		j;
 	int			count;
-	t_sprite 	*delete;
-	t_sprite 	*previous;
 	char		check;
 
-	delete = k->sprite_save;
-	previous = NULL;
-	hook_attack(k);
-	k->player.protected = 1;
-	i = 0;
-	j = 0;
 	count = 0;
 	check = 0;
 	while (count <= 3)
 	{
-		check = k->worldmap[(long)(k->pos_y + j) * k->map_width
-		+ (long)(k->pos_x + i)];
+		check = k->worldmap[(long)(k->pos_y + *j) * k->map_width
+		+ (long)(k->pos_x + *i)];
 		if (check == '2' || check == '1')
 			break ;
-		i += k->dir_x / 5;
-		j += k->dir_y / 5;
+		*i += k->dir_x / 5;
+		*j += k->dir_y / 5;
 		count++;
 	}
-	if (check == '2')
-	{
-		while (delete)
-		{
-			if ((long)delete->x == (long)(k->pos_x + i) && (long)delete->y == (long)(k->pos_y + j))
-			{
-				ft_lstdelone(delete, previous, k);
-				k->worldmap[(long)(k->pos_y + j) * k->map_width
-				+ (long)(k->pos_x + i)] = '0';
-				return ;
-			}
-			else
-			{
-				previous = delete;
-				delete = delete->next;
-			}
-		}
-	}
+	return (check);
+}
+
+void	deal_attack(t_key *k)
+{
+	double		i;
+	double		j;
+
+	hook_attack(k);
+	k->player.protected = 1;
+	i = 0;
+	j = 0;
+	if (check_attack(k, &i, &j) == '2')
+		delete_loop(k, i, j);
 }
 
 int		window_quit(t_key *k)
@@ -93,7 +79,6 @@ int		deal_key(int key, t_key *k)
 	k->plane_y = k->dir_x;
 	return (0);
 }
-
 
 int		release_key(int key, t_key *k)
 {

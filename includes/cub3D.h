@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 15:53:05 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/11 15:03:29 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 10:34:15 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ typedef	struct		s_player
 	int				protected;
 	int				shot;
 }					t_player;
-
 
 typedef union		u_color
 {
@@ -163,6 +162,8 @@ int					window_quit(t_key *k);
 int					deal_key(int key, t_key *k);
 int					release_key(int key, t_key *k);
 int					loop_hook(t_key *k);
+void				wall_loop(t_key *k, t_dda *dda);
+void				dda_init(t_key *k, t_dda *dda, int i);
 int					parsing_init(int fd, t_key *param);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
 void				save_img();
@@ -192,9 +193,8 @@ void				deal_forward(t_key *k);
 void				deal_backward(t_key *k);
 void				deal_left(t_key *k);
 void				deal_right(t_key *k);
-void				ceiling_loop(t_key *k, t_img *img_data, int *pixel_index, int pixel_number);
-void				floor_loop(t_key *k, t_img *img_data,
-int *pixel_index, int pixel_number);
+void				loop_call_up(t_key *k, t_img *img_data, int *pixel, int j);
+void				loop_call_down(t_key *k, t_img *img_data, int *pixel);
 void				wall_calculate(t_key *k, t_dda *dda);
 void				img_create(t_key *k, int i, t_img *img_data, t_dda *dda);
 void				sprite_loop(t_key *k, t_dda *dda, t_img *img_data,
@@ -205,8 +205,12 @@ void				add_saber(t_key *k, t_dda *dda, t_img *img_data);
 void				add_saber_attack(t_key *k, t_dda *dda, t_img *img_data);
 void				add_health_bar(t_key *k, t_dda *dda, t_img *img_data);
 int					hook_attack(t_key *k);
-void				ft_lstdelone(t_sprite *current, t_sprite *previous, t_key *k);
+void				delete_loop(t_key *k, double i, double j);
 void				took_damage(t_key *k);
 void				game_over(t_key *k, t_img *img_data);
+void				texture_init(t_key *param);
+void				value_init(t_key *param);
+int					init_error(int ac, char **av);
+void				shot_check(t_key *k);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 12:33:15 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/11 17:51:55 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/12 10:24:59 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ void	pick_s_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
 	dda->texture_y = (long)(pixel_index[1]
 	* k->texture_so.height / dda->wall_height);
 	if (dda->wall_height > k->window_heigth)
-		dda->texture_y += ((k->texture_so.height * (dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
+		dda->texture_y += ((k->texture_so.height *
+		(dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
 	c.v = k->texture_so.img_data[dda->texture_y
 	* k->texture_so.width + dda->texture_x];
 	if (c.color.r - (6 * (long)dda->wall_distance) > 0)
@@ -38,7 +39,8 @@ void	pick_n_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
 	dda->texture_y = (long)(pixel_index[1]
 	* k->texture_no.height / dda->wall_height);
 	if (dda->wall_height > k->window_heigth)
-		dda->texture_y += ((k->texture_no.height * (dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
+		dda->texture_y += ((k->texture_no.height *
+		(dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
 	c.v = k->texture_no.img_data[dda->texture_y
 	* k->texture_no.width + dda->texture_x];
 	if (c.color.r - (6 * (long)dda->wall_distance) > 0)
@@ -57,7 +59,8 @@ void	pick_e_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
 	dda->texture_y = (long)(pixel_index[1]
 	* k->texture_ea.height / dda->wall_height);
 	if (dda->wall_height > k->window_heigth)
-		dda->texture_y += ((k->texture_ea.height * (dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
+		dda->texture_y += ((k->texture_ea.height *
+		(dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
 	c.v = k->texture_ea.img_data[dda->texture_y
 	* k->texture_ea.width + dda->texture_x];
 	if (c.color.r - (6 * (long)dda->wall_distance) > 0)
@@ -76,7 +79,8 @@ void	pick_w_texture(t_key *k, t_dda *dda, t_img *img_data, int *pixel_index)
 	dda->texture_y = (long)(pixel_index[1]
 	* k->texture_we.height / dda->wall_height);
 	if (dda->wall_height > k->window_heigth)
-		dda->texture_y += ((k->texture_we.height * (dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
+		dda->texture_y += ((k->texture_we.height *
+		(dda->wall_height - k->window_heigth)) / dda->wall_height) / 2;
 	c.v = k->texture_we.img_data[dda->texture_y
 	* k->texture_we.width + dda->texture_x];
 	if (c.color.r - (6 * (long)dda->wall_distance) > 0)
@@ -99,8 +103,7 @@ void	img_create(t_key *k, int i, t_img *img_data, t_dda *dda)
 	j = (int)((k->window_heigth - dda->wall_height) / 2);
 	if (j < 0)
 		j = 0;
-	while (++pixel[2] < j)
-		ceiling_loop(k, img_data, pixel, pixel[2]);
+	loop_call_up(k, img_data, pixel, j);
 	while (++pixel[2] <= j + dda->wall_height && pixel[2] < k->window_heigth)
 	{
 		if (dda->wall_side == 'S')
@@ -115,6 +118,5 @@ void	img_create(t_key *k, int i, t_img *img_data, t_dda *dda)
 			pixel[0] += k->window_width;
 		pixel[1]++;
 	}
-	while (++pixel[2] <= (int)k->window_heigth)
-		floor_loop(k, img_data, pixel, pixel[2]);
+	loop_call_down(k, img_data, pixel);
 }
