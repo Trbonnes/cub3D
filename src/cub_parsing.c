@@ -6,7 +6,7 @@
 /*   By: trbonnes <trbonnes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 09:20:39 by trbonnes          #+#    #+#             */
-/*   Updated: 2019/12/12 11:14:23 by trbonnes         ###   ########.fr       */
+/*   Updated: 2019/12/16 11:45:09 by trbonnes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ void		parsing_error(t_key *param)
 		error_bool = 1;
 	else if (param->sprite_path == 0)
 		error_bool = 1;
-	else if (param->floor_color < 0)
+	else if (param->floor_color < 0 || param->cieling_color < 0)
 		error_bool = 1;
-	else if (param->cieling_color < 0)
+	else if (!param->pos_x || !param->pos_y)
 		error_bool = 1;
 	if (error_bool)
 	{
