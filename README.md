@@ -17,7 +17,7 @@ I personnally wanted to go further by adding ennemies, weapon, HUD, a shader to 
 
 This project is written in C and uses the minilibX, a graphic library derivated from OpenGL.
 This game is designed to run on MacOS.
-If you want to test it, run the Makefile anec provide map.cub as an argument to the cub3D executable.
+If you want to test it, run the Makefile and provide map.cub as an argument to the cub3D executable.
 
 ### Screenshots
 
