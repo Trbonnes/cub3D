@@ -13,7 +13,7 @@ LINK = ar rcs
 ${NAME}:	${OBJS}
 			${LINK} ${LIB} ${OBJS}
 			ranlib cub3d.a
-			${CC} ${CFLAGS} -I /usr/local/include -L /usr/local/lib/ -lmlx -framework OpenGL -framework Appkit ${LIB} -o ${NAME}
+			${CC} ${CFLAGS} -I ./includes -L . -lmlx -framework OpenGL -framework Appkit ${LIB} -o ${NAME}
 			rm ${LIB}
 
 all:		${NAME}
